@@ -1,0 +1,42 @@
+name: Minekoth
+main: com.jayserp.minekoth.Minekoth
+version: 0.1
+
+commands:
+   red:
+      description: Sets the player to the red team.
+      permission: minekoth.basic
+      permission-message: You don't have <permission>
+   blue:
+      description: Sets the player to the blue team.
+      permission: minekoth.basic
+      permission-message: You don't have <permission>
+   lp:
+      description: Lists all players on server.
+      usage: /<command>
+      permission: minekoth.admin
+      permission-message: You don't have <permission>
+   js:
+      description: Test command.
+      usage: /<command>
+      permission: minekoth.admin
+      permission-message: You don't have <permission>
+   leave:
+      description: Allows the player to leave the game.
+      usage: /<command>
+      permission: minekoth.basic
+      permission-message: You don't have <permission>
+   start:
+      description: Allows the player to start the game.
+      usage: /<command>
+      permission: minekoth.admin
+      permission-message: You don't have <permission>
+   reset:
+      description: Allows the player to reset the game.
+      usage: /<command>
+      permission: minekoth.admin
+      permission-message: You don't have <permission>
+   spectate:
+      description: Lets you spectate another user
+      aliases: [spec]
+      
