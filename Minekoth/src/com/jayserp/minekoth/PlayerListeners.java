@@ -176,7 +176,7 @@ public class PlayerListeners implements Listener {
 			    	double rotation = player.getLocation().getPitch();
 			        	
 			    	double jumpFactor = -(rotation / 20);
-			    	double distanceFactor = -((90 - rotation) / 4);
+			    	double distanceFactor = -((90 - rotation) * 10);
 	
 					Vector newDirection = player.getVelocity();
 					inJump.put(player, true);
@@ -188,15 +188,14 @@ public class PlayerListeners implements Listener {
 						newDirection.setZ(newDirection.getZ() * distanceFactor);
 					}
 					
-					
-					
 					player.setVelocity(newDirection);
 					player.damage(3);
 		    		plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
 		    			public void run() {
 		    				inJump.put(player, false);
 		    			  }
-		    			}, 10L);
+		    		}, 10L);
+		    		return;
         		}
 		    }
 		    
@@ -238,23 +237,25 @@ public class PlayerListeners implements Listener {
 			    			TagAPI.refreshPlayer(plugin.getServer().getPlayer(playerData.getName()));
 		    			}
 		    		}
+		    		return;
 		    	} else {
 		    		playerData.setDisguised(null);
 		    		plugin.getPlayerHandler().giveArmor(playerData.getName(), playerData.getTeam());
 		    		TagAPI.refreshPlayer(plugin.getServer().getPlayer(playerData.getName()));
+		    		return;
 		    	}
 		    }
 		    
-		    if ((player.getItemInHand().getType() == Material.IRON_SWORD) && 
-		    		(event.getAction() == Action.LEFT_CLICK_AIR ||
+		    if (event.getAction() == Action.LEFT_CLICK_AIR ||
 		    		event.getAction() == Action.LEFT_CLICK_BLOCK ||
 		    		event.getAction() == Action.RIGHT_CLICK_AIR ||
-		    		event.getAction() == Action.RIGHT_CLICK_BLOCK) &&
+		    		event.getAction() == Action.RIGHT_CLICK_BLOCK &&
 		    		playerData.getType().equalsIgnoreCase("spy") && 
-		    		playerData.getDisguised() != null) {
+		    	playerData.getDisguised() != null) {
 	    		playerData.setDisguised(null);
 	    		plugin.getPlayerHandler().giveArmor(playerData.getName(), playerData.getTeam());
-	    		TagAPI.refreshPlayer(plugin.getServer().getPlayer(playerData.getName()));		    	
+	    		TagAPI.refreshPlayer(plugin.getServer().getPlayer(playerData.getName()));
+	    		return;
 		    }
 	    } else {
 	    	return;
