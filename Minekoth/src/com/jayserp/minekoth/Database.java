@@ -23,10 +23,8 @@ public class Database {
 			Class.forName(driver);
 			con = DriverManager.getConnection(url+db, "root", "");
 		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}		
 	}
@@ -35,7 +33,6 @@ public class Database {
 		try {
 			con.close();
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -47,13 +44,14 @@ public class Database {
 			PreparedStatement ps = con.prepareStatement(query);
 			ps.setInt(1, gameId);
 			ResultSet rs = ps.executeQuery();
-			rs.next();
-			data.setId(rs.getInt("id"));
-			data.setTimestamp(rs.getTimestamp("timestamp"));
-			data.setWinner(rs.getString("winner"));
-			return data;
+			while (rs.next()) { 
+				data.setId(rs.getInt("id"));
+				data.setTimestamp(rs.getTimestamp("timestamp"));
+				data.setWinner(rs.getString("winner"));
+				return data;
+			}
+			return null;
 		} catch (SQLException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 			return null;
 		}
@@ -66,19 +64,21 @@ public class Database {
 			PreparedStatement ps = con.prepareStatement(query);
 			ps.setInt(1, sessionId);
 			ResultSet rs = ps.executeQuery();
-			rs.next();
-			data.setId(rs.getInt("id"));
-			data.setPlayerId(rs.getInt("player_id"));
-			data.setGameId(rs.getInt("game_id"));
-			data.setKills(rs.getInt("kills"));
-			data.setDeaths(rs.getInt("deaths"));
-			data.setWins(rs.getInt("wins"));
-			data.setLosses(rs.getInt("losses"));
-			data.setPoints(rs.getInt("points"));
-			return data;
+			while (rs.next()) { 
+				data.setId(rs.getInt("id"));
+				data.setPlayerId(rs.getInt("player_id"));
+				data.setGameId(rs.getInt("game_id"));
+				data.setKills(rs.getInt("kills"));
+				data.setDeaths(rs.getInt("deaths"));
+				data.setWins(rs.getInt("wins"));
+				data.setLosses(rs.getInt("losses"));
+				data.setPoints(rs.getInt("points"));
+				data.setTime(rs.getInt("time"));
+				return data;
+			}
+			return null;
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			//e.printStackTrace();
+			e.printStackTrace();
 			return null;
 		}
 	}
@@ -90,13 +90,15 @@ public class Database {
 			PreparedStatement ps = con.prepareStatement(query);
 			ps.setInt(1, userId);
 			ResultSet rs = ps.executeQuery();
-			rs.next();			
-			data.setUsername(rs.getString("username"));
-			data.setId(rs.getInt("id"));
-			return data;
+			while (rs.next()) { 
+				data.setId(rs.getInt("id"));
+				data.setUsername(rs.getString("username"));
+				data.setRank(rs.getInt("rank"));
+				return data;
+			}
+			return null;
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			//e.printStackTrace();
+			e.printStackTrace();
 			return null;
 		}
 	}
@@ -108,23 +110,29 @@ public class Database {
 			PreparedStatement ps = con.prepareStatement(query);
 			ps.setString(1, username);
 			ResultSet rs = ps.executeQuery();
-			rs.next();
-			data.setId(rs.getInt("id"));
-			data.setUsername(rs.getString("username"));
-			return data;
+			plugin.getLogger().info("executed query");
+			System.out.println(String.valueOf(rs.next()));
+			while (rs.next()) { 
+				data.setId(rs.getInt("id"));
+				data.setUsername(rs.getString("username"));
+				data.setRank(rs.getInt("rank"));
+				return data;
+			}
+			return null;
+
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			//e.printStackTrace();
+			e.printStackTrace();
 			return null;
 		}
 	}
 	
 	public int insertUser(UsersDataClass user) {
 		try {
-			String query = "INSERT INTO players ('username') VALUES (?)";
+			String query = "INSERT INTO players (username, rank) VALUES (?, ?)";
 			PreparedStatement ps = con.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
 			ps.setString(1, user.getUsername());
-			int id = ps.executeUpdate();
+			ps.setInt(2, user.getRank());
+			ps.executeUpdate();
 			ResultSet rs = ps.getGeneratedKeys();
 			if (rs.next()) {
 				return rs.getInt(1);
@@ -132,7 +140,6 @@ public class Database {
 				return -1;
 			}
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return -1;
 		}	
@@ -152,8 +159,8 @@ public class Database {
 			ps.setInt(5, s.getWins());
 			ps.setInt(6, s.getLosses());
 			ps.setInt(7, s.getPoints());
-			ps.setTimestamp(8, s.getTime());
-			int id = ps.executeUpdate();
+			ps.setFloat(8, s.getTime());
+			ps.executeUpdate();
 			ResultSet rs = ps.getGeneratedKeys();
 			if (rs.next()) {
 				return rs.getInt(1);
@@ -161,7 +168,6 @@ public class Database {
 				return -1;
 			}
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return -1;
 		}
@@ -173,7 +179,7 @@ public class Database {
 			String query = "INSERT INTO games (winner) VALUES (?)";
 			PreparedStatement ps = con.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
 			ps.setString(1, g.getWinner());
-			int id = ps.executeUpdate();
+			ps.executeUpdate();
 			ResultSet rs = ps.getGeneratedKeys();
 			if (rs.next()) {
 				return rs.getInt(1);
@@ -181,7 +187,6 @@ public class Database {
 				return -1;
 			}
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return -1;
 		}	

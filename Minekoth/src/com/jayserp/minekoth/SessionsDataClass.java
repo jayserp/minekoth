@@ -1,7 +1,5 @@
 package com.jayserp.minekoth;
 
-import java.sql.Timestamp;
-
 public class SessionsDataClass {
 	private int id;
 	private int playerId;
@@ -11,7 +9,8 @@ public class SessionsDataClass {
 	private int wins;
 	private int losses;
 	private int points;
-	private Timestamp time;
+	private float time;
+	
 	public int getId() {
 		return id;
 	}
@@ -60,10 +59,10 @@ public class SessionsDataClass {
 	public void setPoints(int points) {
 		this.points = points;
 	}
-	public Timestamp getTime() {
+	public float getTime() {
 		return time;
 	}
-	public void setTime(Timestamp time) {
+	public void setTime(float time) {
 		this.time = time;
 	}
 }

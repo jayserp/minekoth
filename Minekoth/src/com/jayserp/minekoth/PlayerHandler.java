@@ -31,6 +31,9 @@ public class PlayerHandler {
 				e.setTeam("red");
 				e.setScore(0);
 				e.setType(type);
+				if (e.getRank() < 0) {
+					e.setRank(0);
+				}
 
 				if (getRedPlayers().size() <= getBluePlayers().size()) {
 					/*giveArmor(playerName, "red");
@@ -93,6 +96,9 @@ public class PlayerHandler {
 			e.setTeam("blue");
 			e.setScore(0);
 			e.setType(type);
+			if (e.getRank() < 0) {
+				e.setRank(0);
+			}
 
 			if (getBluePlayers().size() <= getRedPlayers().size()) {
 				/*giveArmor(playerName, "blue");
@@ -223,6 +229,13 @@ public class PlayerHandler {
 	
 	public void spawnPlayer(PlayerDataClass player) {
 		if (player != null) {
+		
+			if(player.getType().equals("scout")) {
+				plugin.getServer().getPlayer(player.getName()).setWalkSpeed((float) 0.35);
+			} else {
+				plugin.getServer().getPlayer(player.getName()).setWalkSpeed((float) 0.25);
+			}
+		
 			if (player.getTeam() == "red") {
 				giveWeapons(player.getName());
 				giveArmor(player.getName(), "red");

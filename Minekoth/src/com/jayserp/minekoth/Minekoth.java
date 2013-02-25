@@ -9,9 +9,12 @@ import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.util.Vector;
+
 import org.kitteh.tag.TagAPI;
 
 import com.jayserp.minekoth.PlayerDataClass;
@@ -56,6 +59,8 @@ public final class Minekoth extends JavaPlugin {
 	private StatsHandler stats;
 	private ItemDrops itemDrops;
 	
+	private ArrayList<ArrowDataClass> arrowsFired;
+	
 	private List<PlayerDataClass> userList; //user list
 	
     @Override
@@ -81,6 +86,8 @@ public final class Minekoth extends JavaPlugin {
 		
 		//setup customTab
 		customTab = new CustomTab(this);
+		
+		arrowsFired = new ArrayList<ArrowDataClass>();
     	
     	getServer().getPluginManager().registerEvents(playerJoinListener, this);
     	getServer().getPluginManager().registerEvents(playerLocationListener, this);
@@ -133,7 +140,8 @@ public final class Minekoth extends JavaPlugin {
  		        } 
     			if (split[0].equalsIgnoreCase("soldier") ||
     				split[0].equalsIgnoreCase("spy") ||
-    				split[0].equalsIgnoreCase("sniper")) {
+    				split[0].equalsIgnoreCase("sniper") ||
+    				split[0].equalsIgnoreCase("scout")) {
 	       			getLogger().info(sender.getName() + " set to red " + split[0]);
 	        		playerHandler.addRedPlayer(sender.getName(), split[0]);
 	        		plugin.getCustomTab().updateTab();
@@ -159,7 +167,8 @@ public final class Minekoth extends JavaPlugin {
  		        }
     			if (split[0].equalsIgnoreCase("soldier") ||
     				split[0].equalsIgnoreCase("spy") ||
-    				split[0].equalsIgnoreCase("sniper")) {
+    				split[0].equalsIgnoreCase("sniper") ||
+    				split[0].equalsIgnoreCase("scout")) {
 	       			getLogger().info(sender.getName() + " set to blue " + split[0]);
 	       			playerHandler.addBluePlayer(sender.getName(), split[0]);
 	       			plugin.getCustomTab().updateTab();
@@ -197,6 +206,10 @@ public final class Minekoth extends JavaPlugin {
     	if(cmd.getName().equalsIgnoreCase("js")) {
     		//UsersDataClass data = database.getUser("jayserps");
 			//plugin.getLogger().info(String.valueOf(data.getId()));
+
+    				stats.logGame(userList, null);
+    	
+    		
 			return true;
     	}
     	
@@ -287,4 +300,8 @@ public final class Minekoth extends JavaPlugin {
     public StatsHandler getStatsHandler() {
     	return stats;
     }
+
+	public ArrayList<ArrowDataClass> getArrowsFired() {
+		return arrowsFired;
+	}
 }

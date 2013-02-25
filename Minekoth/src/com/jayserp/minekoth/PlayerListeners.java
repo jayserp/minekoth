@@ -21,7 +21,9 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
+import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -30,6 +32,9 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.metadata.FixedMetadataValue;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 import org.kitteh.tag.PlayerReceiveNameTagEvent;
 import org.kitteh.tag.TagAPI;
@@ -131,10 +136,11 @@ public class PlayerListeners implements Listener {
 	        if(arrow.getShooter() instanceof Player){
 	            Player shooter = (Player) arrow.getShooter();
 	            PlayerDataClass shooterData = plugin.getPlayerHandler().findPlayer(shooter.getDisplayName());
-	            if (shooterData != null) {	            	
-	            	if (shooterData.getType().equalsIgnoreCase("sniper")) {
-	            		evt.setCancelled(true);
-	            		if (shooter.getInventory().contains(Material.ARROW)) {
+	            if (shooterData != null) {           	
+	            	if (shooter.getInventory().contains(Material.ARROW)) {
+	            		if (shooterData.getType().equalsIgnoreCase("sniper") &&
+	            				arrow.hasMetadata("charged")) {
+	            			evt.setCancelled(true);
 	            			//shooter.getInventory().removeItem(new ItemStack (Material.ARROW, 1));
 	            			//shooter.updateInventory();
 	            			//ItemStack is = shooter.getInventory().getItem(Material.ARROW.getId());
@@ -142,17 +148,60 @@ public class PlayerListeners implements Listener {
 	            			//shooter.getInventory().setItem(Material.ARROW.getId(), is);   	
 	        	            		//Location loc = shooter.getLocation(); 
 	        	            		//loc.add(0,1,0);
-	        	            Arrow sniperArrow = shooter.getWorld().spawnArrow(shooter.getEyeLocation(), 
+	            			Location arrowLocation = shooter.getEyeLocation();
+	            			arrowLocation.setY(arrowLocation.getY() + 0.1);
+	        	            Arrow sniperArrow = shooter.getWorld().spawnArrow(arrowLocation, 
 	        	            shooter.getLocation().getDirection(), 0.6f, 1);
 	        	            sniperArrow.setShooter(shooter);
 	        	            sniperArrow.setBounce(false);
-	        	            sniperArrow.setVelocity(shooter.getLocation().getDirection().normalize().multiply(8)); 
-	            		}           		
+	        	            sniperArrow.setVelocity(shooter.getLocation().getDirection().normalize().multiply(12)); 
+	            		}
+	            		if (shooterData.getType().equalsIgnoreCase("soldier")) {
+	            			arrow.setMetadata("rocket", new FixedMetadataValue(plugin, true));
+	            			ArrowDataClass arrowData = new ArrowDataClass();
+	            			arrowData.setArrow(arrow);
+	            			arrow.setTicksLived(30);
+	            			arrowData.setVector(shooter.getLocation().getDirection());
+	            			plugin.getArrowsFired().add(arrowData);
+	            		}
 	            	}
 	            }
 	        }
 	    }
 	}
+	
+	@EventHandler(priority = EventPriority.HIGHEST)
+	public void onShootBow(EntityShootBowEvent evt) {
+		 if(!(evt.getEntity() instanceof Player)) {
+			 return;
+		 }
+		 
+		 Player player = (Player) evt.getEntity();
+		 PlayerDataClass playerData = plugin.getPlayerHandler()
+				 							.findPlayer(player.getDisplayName());
+		 
+		 if (playerData != null) {
+			 if (playerData.getType().equals("sniper") && evt.getForce() == 1) {
+				 evt.getProjectile().setMetadata("charged", new FixedMetadataValue(plugin, true));
+			 }
+		 }
+	}
+	
+    @EventHandler(priority = EventPriority.NORMAL)
+    public void onProjectileHit(ProjectileHitEvent evt){
+		 if(!(evt.getEntity() instanceof Arrow)) {
+			 return;
+		 }
+		 Arrow arrow = (Arrow) evt.getEntity();
+		 if (arrow.hasMetadata("rocket")) {
+			 plugin.getServer().getWorld("world").createExplosion(arrow.getLocation().getX(),
+					 											  arrow.getLocation().getY(),
+					 											  arrow.getLocation().getZ(),
+					 											  2, false, false);
+			 plugin.getArrowsFired().remove(evt.getEntity());
+			 arrow.remove();
+		 }
+    }
 	
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onInteract(PlayerInteractEvent event) {
@@ -161,7 +210,7 @@ public class PlayerListeners implements Listener {
 	    
 	    if (playerData != null) {
 		    if (player.getItemInHand().getType() == Material.BOW && 
-		    		event.getAction() == Action.LEFT_CLICK_BLOCK &&
+		    		event.getAction() == Action.RIGHT_CLICK_BLOCK &&
 		    		(inJump.get(player) == null || inJump.get(player).equals(Boolean.FALSE)) &&
 		    		playerData.getType().equalsIgnoreCase("soldier")) {
 		    	
@@ -180,7 +229,7 @@ public class PlayerListeners implements Listener {
 	
 					Vector newDirection = player.getVelocity();
 					inJump.put(player, true);
-					if (jumpFactor < -1) {
+					/*if (jumpFactor < -1) {
 						newDirection.setY(newDirection.getY() * jumpFactor);
 					}
 					if (distanceFactor < -1) {
@@ -188,7 +237,14 @@ public class PlayerListeners implements Listener {
 						newDirection.setZ(newDirection.getZ() * distanceFactor);
 					}
 					
-					player.setVelocity(newDirection);
+					player.setVelocity(newDirection);*/
+					Vector jumpDirection = player.getLocation().getDirection().multiply(-1.5);
+					jumpDirection.setX(jumpDirection.getX() * 1.4);
+					jumpDirection.setZ(jumpDirection.getZ() * 1.4);
+					newDirection.setX(newDirection.getX() * -jumpDirection.getX());
+					newDirection.setY(newDirection.getY() * -jumpDirection.getY());
+					newDirection.setZ(newDirection.getZ() * -jumpDirection.getZ());
+					player.setVelocity(jumpDirection);
 					player.damage(3);
 		    		plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
 		    			public void run() {
@@ -198,7 +254,35 @@ public class PlayerListeners implements Listener {
 		    		return;
         		}
 		    }
+		   /* if (player.getItemInHand().getType() == Material.BOW && 
+		    		event.getAction() == Action.RIGHT_CLICK_AIR &&
+		    		playerData.getType().equalsIgnoreCase("soldier")) {
+		    	
+           		if (player.getInventory().contains(Material.ARROW)) {
+           			player.getInventory().removeItem(new ItemStack (Material.ARROW, 1));
+           			player.updateInventory();
+           			//Location loc = player.getLocation(); // Get the player Location
+           			//loc.add(0, 1, 0); //Add 1 to the Y, makes the arrow go at chest level instead of feet
+           			
+           			Location arrowLocation = player.getEyeLocation();
+        			arrowLocation.setY(arrowLocation.getY() + 0.1);
+    	            Arrow sniperArrow = player.getWorld().spawnArrow(arrowLocation, 
+    	            player.getLocation().getDirection(), 0.6f, 1);
+    	            sniperArrow.setShooter(player);
+    	            sniperArrow.setBounce(false);
+    	            //sniperArrow.setVelocity(player.getLocation().getDirection().normalize().multiply(12)); 
+        		}
+           			
+            	return;
+		    }	*/
 		    
+		    /*if (player.getItemInHand().getType() == Material.BOW && 
+		    		(event.getAction() == Action.LEFT_CLICK_AIR || 
+		    		event.getAction() == Action.LEFT_CLICK_BLOCK) &&
+		    		playerData.getType().equalsIgnoreCase("soldier")) {
+		    	event.setCancelled(true);
+		    	return;
+		    }	*/
 		    if (player.getItemInHand().getType() == Material.IRON_SWORD && 
 		    		(event.getAction() == Action.RIGHT_CLICK_AIR ||
 		    		event.getAction() == Action.RIGHT_CLICK_BLOCK) &&
@@ -246,16 +330,31 @@ public class PlayerListeners implements Listener {
 		    	}
 		    }
 		    
-		    if (event.getAction() == Action.LEFT_CLICK_AIR ||
+		    if ((event.getAction() == Action.LEFT_CLICK_AIR ||
 		    		event.getAction() == Action.LEFT_CLICK_BLOCK ||
 		    		event.getAction() == Action.RIGHT_CLICK_AIR ||
-		    		event.getAction() == Action.RIGHT_CLICK_BLOCK &&
+		    		event.getAction() == Action.RIGHT_CLICK_BLOCK) &&
 		    		playerData.getType().equalsIgnoreCase("spy") && 
-		    	playerData.getDisguised() != null) {
+		    		playerData.getDisguised() != null) {
 	    		playerData.setDisguised(null);
 	    		plugin.getPlayerHandler().giveArmor(playerData.getName(), playerData.getTeam());
 	    		TagAPI.refreshPlayer(plugin.getServer().getPlayer(playerData.getName()));
 	    		return;
+		    }
+		    
+		    if (player.getItemInHand().getType() == Material.BOW && 
+		    		event.getAction() == Action.LEFT_CLICK_AIR &&
+		    		playerData.getType().equalsIgnoreCase("sniper")) {
+		    	plugin.getServer().getLogger().info("scoping");
+		    	if (playerData.isScoped() == true) {
+		    		playerData.setScoped(false);
+		    		player.removePotionEffect(PotionEffectType.SLOW);
+		    		player.setWalkSpeed((float) 0.25);
+		    	} else {
+		    		playerData.setScoped(true);
+		    		player.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 20000, 8));
+		    		player.setWalkSpeed((float) -0.05);
+		    	}
 		    }
 	    } else {
 	    	return;
@@ -316,7 +415,6 @@ public class PlayerListeners implements Listener {
 			PlayerDataClass playerData = plugin.getPlayerHandler()
 					   .findPlayer(player.getDisplayName());
 			
-			//plugin.getLogger().info(playerData.getName() + " " + attackerData.getName());
 			if (attackerData != null && playerData != null) {
 				if (attackerData.getTeam() == playerData.getTeam()) {
 					evt.setCancelled(true);
@@ -337,8 +435,7 @@ public class PlayerListeners implements Listener {
             }
         }, 3);
 	}
-	
-	
+
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onDeath(PlayerDeathEvent evt) {
 		evt.getDrops().clear();
@@ -352,17 +449,14 @@ public class PlayerListeners implements Listener {
 			
 			if (evt.getEntity().getKiller() != null) {	
 				Player killer = evt.getEntity().getKiller();
-				PlayerDataClass killerData = plugin.getPlayerHandler().findPlayer(killer.getDisplayName());
-				//List<PlayerDataClass> redPlayers = plugin.getPlayerHandler().getRedPlayers();
-				//List<PlayerDataClass> bluePlayers = plugin.getPlayerHandler().getBluePlayers();
-	
+				PlayerDataClass killerData = plugin.getPlayerHandler()
+												   .findPlayer(killer.getDisplayName());
 		
 				playerData.setDeaths(playerData.getDeaths() + 1);		
 				if (killer != null) {
 					killerData.setKills(killerData.getKills() + 1);
 				}
-				plugin.getLogger().info(player.getDisplayName() + " K/D: "
-						+ playerData.getKills() + "/" + playerData.getDeaths());
+
 			}
 			if (playerData.getType().equals("spy") && playerData.getDisguised() != null) {
 				playerData.setDisguised(null);

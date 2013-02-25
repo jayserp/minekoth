@@ -1,5 +1,8 @@
 package com.jayserp.minekoth;
 
+import org.bukkit.entity.Entity;
+import org.bukkit.scheduler.BukkitRunnable;
+
 public class GameTimer {
 
 	private Minekoth plugin;
@@ -9,7 +12,6 @@ public class GameTimer {
 	
 	public GameTimer(final Minekoth plugin) {
 		this.plugin = plugin;
-
 		
 		id = plugin.getServer().getScheduler().scheduleAsyncRepeatingTask(plugin, new Runnable() {
 			public void run() {
@@ -23,6 +25,22 @@ public class GameTimer {
 				//System.out.println(String.valueOf(plugin.userList.size()));
 			}
 		}, 20L, 20L);
+		
+		plugin.getServer().getScheduler().scheduleAsyncRepeatingTask(plugin,
+			new BukkitRunnable() {
+				public void run() {
+					for (ArrowDataClass e : plugin.getArrowsFired()) {
+						//e.setVelocity(e.getVelocity().setY(e.getVelocity().getY()));
+						/*plugin.getLogger().info("x/y/z: " + String.valueOf(e.getVelocity().getX()) + "/" +
+															String.valueOf(e.getVelocity().getY()) + "/" +
+															String.valueOf(e.getVelocity().getZ()));*/
+						
+						e.getArrow().setVelocity(e.getVector());
+															
+
+					}
+				}		
+		}, 0, 1);
 	}
 	
 	public int getGameTimerId() {

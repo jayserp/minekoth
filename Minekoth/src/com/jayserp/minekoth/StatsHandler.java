@@ -1,10 +1,5 @@
 package com.jayserp.minekoth;
 
-import java.sql.Time;
-import java.sql.Timestamp;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.List;
 
 public class StatsHandler {
@@ -27,15 +22,15 @@ public class StatsHandler {
 			for(int i = 0; i < data.size(); i++) {
 				PlayerDataClass temp = data.get(i);
 				UsersDataClass user = db.getUser(temp.getName());
-				Date currentTime = new Date();
-				long difference = currentTime.getTime() - temp.getTime().getTime();
+				long difference = System.currentTimeMillis() - temp.getTime();
+				plugin.getLogger().info(String.valueOf(difference));
 				if(user != null) {
 					SessionsDataClass s = new SessionsDataClass();
 					s.setGameId(gameId);
 					s.setPlayerId(user.getId());
 					s.setKills(temp.getKills());
 					s.setDeaths(temp.getDeaths());
-					s.setTime(new Timestamp(difference));
+					s.setTime(difference);
 					s.setPoints((temp.getKills() * 4) - temp.getDeaths());
 					if (temp.getTeam() == winner) {
 						s.setWins(1);
@@ -55,7 +50,7 @@ public class StatsHandler {
 						s.setPlayerId(userId);
 						s.setKills(temp.getKills());
 						s.setDeaths(temp.getDeaths());
-						s.setTime(new Timestamp(difference));
+						s.setTime(difference);
 						s.setPoints((temp.getKills() * 4) - temp.getDeaths());
 						if (temp.getTeam() == winner) {
 							s.setWins(1);

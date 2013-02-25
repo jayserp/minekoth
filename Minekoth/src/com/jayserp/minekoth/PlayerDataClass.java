@@ -1,8 +1,5 @@
 package com.jayserp.minekoth;
 
-import java.sql.Timestamp;
-import java.util.Date;
-
 class PlayerDataClass {
 
 	private String name;
@@ -13,11 +10,12 @@ class PlayerDataClass {
     private int kills = 0;
     private int deaths = 0;
     private int points = 0;
-    private Timestamp timeStarted;
+    private long timeStarted;
+    private int rank = -1;
+    private boolean scoped = false;
    
     public PlayerDataClass() {
-    	Date date = new Date();
-    	timeStarted = new Timestamp(date.getTime());
+    	timeStarted = System.currentTimeMillis();
     }
     
     public String getTeam() {
@@ -68,11 +66,17 @@ class PlayerDataClass {
 	public void setPoints(int points) {
 		this.points = points;
 	}
-	public Timestamp getTime() {
+	public long getTime() {
 		return timeStarted;
 	}
-	public void setTime(Timestamp time) {
+	public void setTime(long time) {
 		this.timeStarted = time;
+	}
+	public int getRank() {
+		return rank;
+	}
+	public void setRank(int rank) {
+		this.rank = rank;
 	}
 	public void resetScores() {
 	    this.score = 0;
@@ -80,7 +84,14 @@ class PlayerDataClass {
 	    this.kills = 0;
 	    this.deaths = 0;
 	    this.points = 0;
-	    Date date = new Date();
-	    this.timeStarted = new Timestamp(date.getTime());
+	    this.timeStarted = System.currentTimeMillis();
+	}
+
+	public boolean isScoped() {
+		return scoped;
+	}
+
+	public void setScoped(boolean scoped) {
+		this.scoped = scoped;
 	}
 }
