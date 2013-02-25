@@ -255,6 +255,7 @@ public class GameManager {
 			PlayerDataClass player = players.get(i);
 			plugin.getPlayerHandler().spawnPlayer(player);
 		}
+		plugin.getServer().getWorld("world").setTime(0);
 	}
 	
 	/**
