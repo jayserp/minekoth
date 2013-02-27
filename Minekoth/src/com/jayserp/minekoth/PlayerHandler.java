@@ -53,6 +53,8 @@ public class PlayerHandler {
 			} else {
 				if (player.getTeam() == "blue" || !player.getType().equals(type)) {
 					if (player.getTeam().equals("red")) {
+						plugin.getPlayerLocationListener()
+						  .removePlayerFromPoint(player);
 						plugin.getUserList().get(findPlayerId(playerName)).setType(type);
 						plugin.getServer().getPlayer(playerName).sendMessage("Changed class to: " + type);						
 						if (plugin.getGameManager().hasGameStarted() == true) {
@@ -63,6 +65,8 @@ public class PlayerHandler {
 					if (getRedPlayers().size() < getBluePlayers().size()) {
 						/*giveArmor(playerName, "red");
 						giveWeapons(playerName);*/
+						plugin.getPlayerLocationListener()
+						  .removePlayerFromPoint(player);
 						plugin.getUserList().get(findPlayerId(playerName)).setTeam("red");
 						plugin.getUserList().get(findPlayerId(playerName)).setType(type);
 			    		plugin.getServer().broadcastMessage(ChatColor.YELLOW + playerName + ChatColor.WHITE +
@@ -119,6 +123,8 @@ public class PlayerHandler {
 
 			if (player.getTeam() == "red" || !player.getType().equals(type)) {
 				if (player.getTeam().equals("blue")) {
+					plugin.getPlayerLocationListener()
+					  .removePlayerFromPoint(player);
 					plugin.getUserList().get(findPlayerId(playerName)).setType(type);
 					plugin.getServer().getPlayer(playerName).sendMessage("Changed class to: " + type);
 					if (plugin.getGameManager().hasGameStarted() == true) {
@@ -129,6 +135,8 @@ public class PlayerHandler {
 					if (getBluePlayers().size() < getRedPlayers().size()) {
 						/*giveArmor(playerName, "blue");
 						giveWeapons(playerName);*/
+						plugin.getPlayerLocationListener()
+						  .removePlayerFromPoint(player);
 						plugin.getUserList().get(findPlayerId(playerName)).setTeam("blue");
 						plugin.getUserList().get(findPlayerId(playerName)).setType(type);
 			    		plugin.getServer().broadcastMessage(ChatColor.YELLOW + playerName + ChatColor.WHITE +
@@ -235,7 +243,7 @@ public class PlayerHandler {
 			} else {
 				plugin.getServer().getPlayer(player.getName()).setWalkSpeed((float) 0.25);
 			}
-		
+					
 			if (player.getTeam() == "red") {
 				giveWeapons(player.getName());
 				giveArmor(player.getName(), "red");

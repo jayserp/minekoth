@@ -163,11 +163,11 @@ public class PlayerLocationListener implements Listener {
     
     public void removePlayerFromPoint(PlayerDataClass player) {
     	if (player != null) {
-    		//plugin.getServer().getLogger().info("removing player from point");
+    		
     		if (inside.contains(player.getName())) {
     			inside.remove(player.getName());
     		}
-    		
+
     		if (redPlayersOnPoint.contains(player.getName()) || bluePlayersOnPoint.contains(player.getName())) {
     
 				if (player.getTeam() == "red") {
@@ -183,7 +183,7 @@ public class PlayerLocationListener implements Listener {
 						plugin.getGameManager().deregisterCapture("blue");
 					}
 				}
-    		}
+    		}    		
     	}
     }   
     

@@ -1,41 +1,103 @@
 package com.jayserp.minekoth;
 
-import org.bukkit.inventory.ItemStack;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.bukkit.Location;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
 
 //this contains utility functions that are shared among the different classes
 public class Utilities {
 	
 	private Minekoth plugin;
 	
-	private int countdownTimer;
-	private int countdownTaskID;
-	
 	public Utilities(Minekoth plugin) {
 		this.plugin = plugin;
 	}
-	
-	/*
-	 * This function creates a countdown timer
-	 * Accepts:
-	 * string, int, int
-	 * text to display, time to countdown from, time to countdown to
-	 */
-	public void spawnCountdown(final String message, final int fromTime, final int toTime) {
-		
-		countdownTimer = fromTime;
-		
-		countdownTaskID = plugin.getServer().getScheduler().scheduleAsyncRepeatingTask(plugin, new Runnable() {
-			public void run() {
-								
-				plugin.getServer().broadcastMessage(message + countdownTimer);
-				countdownTimer--;
-				
-				if (countdownTimer == toTime) {
-					plugin.getServer().getScheduler().cancelTask(countdownTaskID);
-				}
-			}
-		}, 20L, 20L);
-	}
-	
+	/**
+	    * Gets entities inside a cone.
+	    * @see Utilities#getPlayersInCone(List, Location, int, int, int)
+	    *
+	    * @param entities - {@code List<Entity>}, list of nearby entities
+	    * @param startpoint - {@code Location}, center point
+	    * @param radius - {@code int}, radius of the circle
+	    * @param degrees - {@code int}, angle of the cone
+	    * @param direction - {@code int}, direction of the cone
+	    * @return {@code List<Entity>} - entities in the cone
+	    */
+	    public static List<Entity> getEntitiesInCone(List<Entity> entities, Location startpoint, int radius, int degrees, int direction)
+	    {
+	        List<Entity> newEntities = new ArrayList<Entity>();
+	     
+	        int[] startPos = new int[] { (int)startpoint.getX(), (int)startpoint.getZ() };
+	     
+	        int[] endA = new int[] { (int)(radius * Math.cos(direction - (degrees / 2))), (int)(radius * Math.sin(direction - (degrees / 2))) };
+	   
+	        for(Entity e : entities)
+	        {
+	            Location l = e.getLocation();       
+	            int[] entityVector = getVectorForPoints(startPos[0], startPos[1], l.getBlockX(), l.getBlockY());
+	 
+	            double angle = getAngleBetweenVectors(endA, entityVector);
+	            if(Math.toDegrees(angle) < degrees && Math.toDegrees(angle) > 0)
+	                newEntities.add(e);
+	        }
+	        return newEntities;
+	    }
+		/**
+		    * Check player inside a cone.
+		    * @see Utilities#getPlayersInCone(List, Location, int, int, int)
+		    *
+		    * @param player - {@code List<Entity>}, list of nearby entities
+		    * @param startpoint - {@code Location}, center point
+		    * @param radius - {@code int}, radius of the circle
+		    * @param degrees - {@code int}, angle of the cone
+		    * @param direction - {@code int}, direction of the cone
+		    * @return {@code List<Entity>} - entities in the cone
+		    */
+		    public static boolean checkPlayerInCone(Player player, Location startpoint, int radius, int degrees, int direction)
+		    {
+		        int[] startPos = new int[] { (int)startpoint.getX(), (int)startpoint.getZ() };
+		     
+		        int[] endA = new int[] { (int)(radius * Math.cos(direction - (degrees / 2))), (int)(radius * Math.sin(direction - (degrees / 2))) };
+		   
+
+		            Location l = player.getLocation();       
+		            int[] entityVector = getVectorForPoints(startPos[0], startPos[1], l.getBlockX(), l.getBlockY());
+		 
+		            double angle = getAngleBetweenVectors(endA, entityVector);
+		            if(Math.toDegrees(angle) < degrees && Math.toDegrees(angle) > 0) {
+		                return true;
+		            } else {
+		            	return false;
+		            }
+
+
+		    }
+	    /**
+	    * Created an integer vector in 2d between two points
+	    *
+	    * @param x1 - {@code int}, X pos 1
+	    * @param y1 - {@code int}, Y pos 1
+	    * @param x2 - {@code int}, X pos 2
+	    * @param y2 - {@code int}, Y pos 2
+	    * @return {@code int[]} - vector
+	    */
+	    public static int[] getVectorForPoints(int x1, int y1, int x2, int y2)
+	    {
+	        return new int[] { x2 - x1, y2 - y1 };
+	    }
+	    /**
+	    * Get the angle between two vectors.
+	    *
+	    * @param vector1 - {@code int[]}, vector 1
+	    * @param vector2 - {@code int[]}, vector 2
+	    * @return {@code double} - angle
+	    */
+	    public static double getAngleBetweenVectors(int[] vector1, int[] vector2)
+	    {
+	        return Math.atan2(vector2[1], vector2[0]) - Math.atan2(vector1[1], vector1[0]);
+	    }
 
 }

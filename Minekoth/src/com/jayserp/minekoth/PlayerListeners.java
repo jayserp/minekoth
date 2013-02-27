@@ -329,7 +329,7 @@ public class PlayerListeners implements Listener {
 		    		return;
 		    	}
 		    }
-		    
+
 		    if ((event.getAction() == Action.LEFT_CLICK_AIR ||
 		    		event.getAction() == Action.LEFT_CLICK_BLOCK ||
 		    		event.getAction() == Action.RIGHT_CLICK_AIR ||
@@ -344,8 +344,7 @@ public class PlayerListeners implements Listener {
 		    
 		    if (player.getItemInHand().getType() == Material.BOW && 
 		    		event.getAction() == Action.LEFT_CLICK_AIR &&
-		    		playerData.getType().equalsIgnoreCase("sniper")) {
-		    	plugin.getServer().getLogger().info("scoping");
+		    		playerData.getType().equalsIgnoreCase("sniper")) {		    	
 		    	if (playerData.isScoped() == true) {
 		    		playerData.setScoped(false);
 		    		player.removePotionEffect(PotionEffectType.SLOW);
@@ -402,6 +401,17 @@ public class PlayerListeners implements Listener {
 				if (attackerData.getTeam() == playerData.getTeam()) {
 					evt.setCancelled(true);
 				}
+			}
+			
+			if (attackerData.getType().equals("spy")) {
+				plugin.getLogger().info("Logged knife stab");
+	    		if(plugin.getUtilities()
+						  .checkPlayerInCone(player, 
+											 attacker.getLocation(), 
+											 4, 80, (int)attacker.getLocation()
+											 				  .getYaw())) {
+	    			plugin.getLogger().info(attackerData.getName() + " behind " + playerData.getName());    			
+	    		}
 			}
 		}
 		

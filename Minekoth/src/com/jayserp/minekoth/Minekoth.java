@@ -1,5 +1,7 @@
 package com.jayserp.minekoth;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -58,6 +60,9 @@ public final class Minekoth extends JavaPlugin {
 	private Database sqlDb;
 	private StatsHandler stats;
 	private ItemDrops itemDrops;
+	private Utilities utilities;
+	
+	public boolean debug = true;
 	
 	private ArrayList<ArrowDataClass> arrowsFired;
 	
@@ -74,7 +79,7 @@ public final class Minekoth extends JavaPlugin {
     	Listener = new SpectateListener(this);
     	CommandExecutor = new SpectateCommandExecutor(this);
     	itemDrops = new ItemDrops(this);
-    	
+    	utilities = new Utilities(this);
     	sqlDb = new Database(this);
     	stats = new StatsHandler(this);
     	
@@ -299,6 +304,10 @@ public final class Minekoth extends JavaPlugin {
     
     public StatsHandler getStatsHandler() {
     	return stats;
+    }
+    
+    public Utilities getUtilities() {
+    	return utilities;
     }
 
 	public ArrayList<ArrowDataClass> getArrowsFired() {
