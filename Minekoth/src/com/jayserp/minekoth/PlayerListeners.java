@@ -400,18 +400,21 @@ public class PlayerListeners implements Listener {
 			if (attackerData != null && playerData != null) {
 				if (attackerData.getTeam() == playerData.getTeam()) {
 					evt.setCancelled(true);
+					return;
 				}
-			}
-			
-			if (attackerData.getType().equals("spy")) {
-				plugin.getLogger().info("Logged knife stab");
-	    		if(plugin.getUtilities()
-						  .checkPlayerInCone(player, 
-											 attacker.getLocation(), 
-											 4, 80, (int)attacker.getLocation()
-											 				  .getYaw())) {
-	    			plugin.getLogger().info(attackerData.getName() + " behind " + playerData.getName());    			
-	    		}
+				
+				if (attackerData.getType().equals("spy")) {
+					plugin.getLogger().info("Logged knife stab");
+		    		if(plugin.getUtilities()
+							  .checkPlayerInCone(player, 
+												 attacker.getLocation(), 
+												 4, 80, (int)attacker.getLocation()
+												 				  .getYaw())) {
+		    			plugin.getLogger().info(attackerData.getName() + " behind " + playerData.getName());    			
+		    		}
+				}
+			} else {
+				evt.setCancelled(true);
 			}
 		}
 		
