@@ -46,7 +46,7 @@ public final class Minekoth extends JavaPlugin {
 
 	private Minekoth plugin = this;
 
-	private PlayerListeners playerJoinListener;
+	private PlayerListeners playerListener;
 	private PlayerLocationListener playerLocationListener;
 	private BlockListener blockListener;	
 	private PlayerHandler playerHandler;	
@@ -73,7 +73,7 @@ public final class Minekoth extends JavaPlugin {
     	getLogger().info("Minekoth ENABLED");
     	    	
     	//register listeners
-    	playerJoinListener = new PlayerListeners(this);
+    	playerListener = new PlayerListeners(this);
     	playerLocationListener = new PlayerLocationListener(this);
     	blockListener = new BlockListener(this);   	
     	Listener = new SpectateListener(this);
@@ -94,7 +94,7 @@ public final class Minekoth extends JavaPlugin {
 		
 		arrowsFired = new ArrayList<ArrowDataClass>();
     	
-    	getServer().getPluginManager().registerEvents(playerJoinListener, this);
+    	getServer().getPluginManager().registerEvents(playerListener, this);
     	getServer().getPluginManager().registerEvents(playerLocationListener, this);
     	getServer().getPluginManager().registerEvents(blockListener, this);
 		getServer().getPluginManager().registerEvents(Listener, this);
@@ -152,7 +152,7 @@ public final class Minekoth extends JavaPlugin {
 	        		plugin.getCustomTab().updateTab();
 	        		TagAPI.refreshPlayer((Player) sender);
     			} else {
-    				sender.sendMessage("Classes available: soldier, spy, sniper");
+    				sender.sendMessage("Classes available: soldier, spy, sniper, scout");
     			}
 			} else {
 				sender.sendMessage("Sorry but this command is only for players");
@@ -179,7 +179,7 @@ public final class Minekoth extends JavaPlugin {
 	       			plugin.getCustomTab().updateTab();
 	       			TagAPI.refreshPlayer((Player) sender);
     			} else {
-    				sender.sendMessage("Classes available: soldier, spy, sniper");
+    				sender.sendMessage("Classes available: soldier, spy, sniper, scout");
     			}
     		} else {
     			sender.sendMessage("Sorry but this command is only for players");
@@ -305,6 +305,10 @@ public final class Minekoth extends JavaPlugin {
     public StatsHandler getStatsHandler() {
     	return stats;
     }
+    
+    public PlayerListeners getPlayerListener() {
+    	return playerListener;
+    }  
     
     public Utilities getUtilities() {
     	return utilities;

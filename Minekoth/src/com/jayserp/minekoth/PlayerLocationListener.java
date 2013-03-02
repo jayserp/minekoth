@@ -57,36 +57,46 @@ public class PlayerLocationListener implements Listener {
         			plugin.getPlayerHandler().findPlayer(player.getDisplayName()) != null) {
         		
         		if (playerGame.getType().equals("spy") && playerGame.getDisguised() != null) {
+        			removePlayerFromPoint(playerGame);
+        			plugin.getGameManager().deregisterCapture(playerGame.getTeam());
         			return;
         		}
+        		
                 addPlayerToPoint(playerGame);
             	//plugin.getServer().broadcastMessage(event.getPlayer().getName() + " entered the capture area.");
             	inside.add(event.getPlayer().getName());
-           		//captureListener.updatePlayerVicinity(inside);            	
+           		//captureListener.updatePlayerVicinity(inside);
+            	if (bluePlayersOnPoint.size() == redPlayersOnPoint.size()) {
+            		plugin.getServer().broadcastMessage("Defend the point!");
+            		plugin.getGameManager().deregisterCapture("red");
+            		plugin.getGameManager().deregisterCapture("blue");
+            		return;
+            	}	
             	if (redPlayersOnPoint.size() > 0 && bluePlayersOnPoint.size() == 0) {
            			if (plugin.getGameManager().getCaptureOwner() != 1) {
            				plugin.getServer().broadcastMessage("The Control Point is being captured by " +
            					"RED.");
       					setPoint(DyeColor.RED);
-           			}
-          			plugin.getGameManager().registerCapture("red");
+      					plugin.getGameManager().registerCapture("red");
+           			}          			
             	}  				
             	if (bluePlayersOnPoint.size() > 0 && redPlayersOnPoint.size() == 0) {
             		if (plugin.getGameManager().getCaptureOwner() != 2) {
             			plugin.getServer().broadcastMessage("The Control Point is being captured by " +
             				"BLUE.");
             			setPoint(DyeColor.BLUE);
-            		}
-            		plugin.getGameManager().registerCapture("blue");
+            			plugin.getGameManager().registerCapture("blue");
+            		}           		
             	}    				
-            	if (bluePlayersOnPoint.size() == redPlayersOnPoint.size()) {
-            		plugin.getServer().broadcastMessage("Defend the point!");
-            	}	
+
             }             
         } else {       	
             if(inside.contains(event.getPlayer().getName())) {
             	//plugin.getServer().broadcastMessage(event.getPlayer().getName() + " left the capture area.");
-            	removePlayerFromPoint(playerGame);
+            	if (playerGame != null) {
+	            	removePlayerFromPoint(playerGame);
+	            	plugin.getGameManager().deregisterCapture(playerGame.getTeam());
+            	}
         				
         		if (plugin.getGameManager().getCaptureOwner() == 0) {
         			setPoint(DyeColor.GRAY);	
@@ -97,6 +107,30 @@ public class PlayerLocationListener implements Listener {
         		if (plugin.getGameManager().getCaptureOwner() == 2) {
         	   		setPoint(DyeColor.BLUE);
         		}
+        		
+            	if (bluePlayersOnPoint.size() == redPlayersOnPoint.size()) {
+            		plugin.getServer().broadcastMessage("Defend the point!");
+            		plugin.getGameManager().deregisterCapture("red");
+            		plugin.getGameManager().deregisterCapture("blue");
+            		return;
+            	}	
+            	if (redPlayersOnPoint.size() > 0 && bluePlayersOnPoint.size() == 0) {
+           			if (plugin.getGameManager().getCaptureOwner() != 1) {
+           				plugin.getServer().broadcastMessage("The Control Point is being captured by " +
+           					"RED.");
+      					setPoint(DyeColor.RED);
+      					plugin.getGameManager().registerCapture("red");
+           			}          			
+            	}  				
+            	if (bluePlayersOnPoint.size() > 0 && redPlayersOnPoint.size() == 0) {
+            		if (plugin.getGameManager().getCaptureOwner() != 2) {
+            			plugin.getServer().broadcastMessage("The Control Point is being captured by " +
+            				"BLUE.");
+            			setPoint(DyeColor.BLUE);
+            			plugin.getGameManager().registerCapture("blue");
+            		}           		
+            	} 
+        		
             }           	
         }            
     	//plugin.getLogger().info("Number of people inside: " + String.valueOf(inside.size()));
@@ -169,7 +203,6 @@ public class PlayerLocationListener implements Listener {
     		}
 
     		if (redPlayersOnPoint.contains(player.getName()) || bluePlayersOnPoint.contains(player.getName())) {
-    
 				if (player.getTeam() == "red") {
 					redPlayersOnPoint.remove(player.getName());
 					if (redPlayersOnPoint.size() == 0) {

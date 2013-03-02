@@ -238,12 +238,15 @@ public class PlayerHandler {
 	public void spawnPlayer(PlayerDataClass player) {
 		if (player != null) {
 		
+			player.setDisguised(null);
+			plugin.getPlayerListener().setUnscoped(plugin.getServer().getPlayer(player.getName()), player);
+			
 			if(player.getType().equals("scout")) {
 				plugin.getServer().getPlayer(player.getName()).setWalkSpeed((float) 0.35);
 			} else {
 				plugin.getServer().getPlayer(player.getName()).setWalkSpeed((float) 0.25);
 			}
-					
+			
 			if (player.getTeam() == "red") {
 				giveWeapons(player.getName());
 				giveArmor(player.getName(), "red");

@@ -346,13 +346,9 @@ public class PlayerListeners implements Listener {
 		    		event.getAction() == Action.LEFT_CLICK_AIR &&
 		    		playerData.getType().equalsIgnoreCase("sniper")) {		    	
 		    	if (playerData.isScoped() == true) {
-		    		playerData.setScoped(false);
-		    		player.removePotionEffect(PotionEffectType.SLOW);
-		    		player.setWalkSpeed((float) 0.25);
+		    		setUnscoped(player, playerData);
 		    	} else {
-		    		playerData.setScoped(true);
-		    		player.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 20000, 8));
-		    		player.setWalkSpeed((float) -0.05);
+		    		setScoped(player, playerData);
 		    	}
 		    }
 	    } else {
@@ -440,10 +436,12 @@ public class PlayerListeners implements Listener {
 	public void onPlayerRespawn(final PlayerRespawnEvent evt) {		
 		Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable(){			 
             public void run(){   
-        		PlayerDataClass player = plugin.getPlayerHandler().findPlayer(evt.getPlayer().getDisplayName());
-        		if (player != null) {
-        			plugin.getLogger().info("Respawning: " + player.getName());
-        			plugin.getPlayerHandler().spawnPlayer(player);
+        		PlayerDataClass playerData = plugin.getPlayerHandler().findPlayer(evt.getPlayer().getDisplayName());
+        		Player player = evt.getPlayer();
+        		if (playerData != null) {
+        			setUnscoped(player, playerData);
+        			plugin.getLogger().info("Respawning: " + playerData.getName());
+        			plugin.getPlayerHandler().spawnPlayer(playerData);
         		}
             }
         }, 3);
@@ -456,7 +454,10 @@ public class PlayerListeners implements Listener {
 		final Player player = evt.getEntity().getPlayer();
 		final PlayerDataClass playerData = plugin.getPlayerHandler().findPlayer(player.getDisplayName());
 		
-		if (playerData != null) {		
+		if (playerData != null) {	
+			
+			setUnscoped(player, playerData);
+			
 			plugin.getPlayerLocationListener()
 			  .removePlayerFromPoint(playerData);
 			
@@ -491,5 +492,17 @@ public class PlayerListeners implements Listener {
 		} else {
 			plugin.getGameManager().teleportToSpawn(player);
 		}
-	}       	
+	} 
+	
+	public void setScoped(Player player, PlayerDataClass playerData) {
+    	playerData.setScoped(true);
+    	player.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 20000, 8));
+    	player.setWalkSpeed((float) -0.05);
+	}
+	
+	public void setUnscoped(Player player, PlayerDataClass playerData) {
+		playerData.setScoped(false);
+		player.removePotionEffect(PotionEffectType.SLOW);
+		player.setWalkSpeed((float) 0.25);		
+	}
 }
