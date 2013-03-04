@@ -50,7 +50,7 @@ public class SpectateCommandExecutor implements CommandExecutor {
 
 		Player cmdsender = (Player) sender;
 
-		if (!cmdsender.hasPermission("spectate.use")) {
+		if (!cmdsender.hasPermission("minekoth.basic")) {
 			cmdsender.sendMessage("You do not have permission to spectate.");
 			return true;
 		}
@@ -164,7 +164,7 @@ public class SpectateCommandExecutor implements CommandExecutor {
 				if (args[0].equalsIgnoreCase("inv")) {
 					if (isSpectating.get(cmdsender.getName()) != null) {
 						if (isSpectating.get(cmdsender.getName())) {
-							cmdsender.sendMessage("�cError: You can not change this setting while spectating.");
+							cmdsender.sendMessage("���cError: You can not change this setting while spectating.");
 							return true;
 						}
 					}

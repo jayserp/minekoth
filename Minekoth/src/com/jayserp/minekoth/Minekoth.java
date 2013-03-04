@@ -1,21 +1,16 @@
 package com.jayserp.minekoth;
 
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.bukkit.ChatColor;
 import org.bukkit.DyeColor;
-import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.util.Vector;
 
 import org.kitteh.tag.TagAPI;
 
@@ -61,6 +56,8 @@ public final class Minekoth extends JavaPlugin {
 	private StatsHandler stats;
 	private ItemDrops itemDrops;
 	private Utilities utilities;
+	private ServerHandler serverHandler;
+	private ChatUpdater chatUpdater;
 	
 	public boolean debug = true;
 	
@@ -82,6 +79,8 @@ public final class Minekoth extends JavaPlugin {
     	utilities = new Utilities(this);
     	sqlDb = new Database(this);
     	stats = new StatsHandler(this);
+    	serverHandler = new ServerHandler(this);
+    	chatUpdater = new ChatUpdater(this);
     	
     	//setup gameManager
 		gameManager = new GameManager(this);
@@ -99,6 +98,8 @@ public final class Minekoth extends JavaPlugin {
     	getServer().getPluginManager().registerEvents(blockListener, this);
 		getServer().getPluginManager().registerEvents(Listener, this);
 		getServer().getPluginManager().registerEvents(itemDrops, this);
+		getServer().getPluginManager().registerEvents(serverHandler, this);
+		getServer().getPluginManager().registerEvents(chatUpdater, this);
     	
     	//setup user list
     	userList = new ArrayList<PlayerDataClass>();
@@ -191,7 +192,7 @@ public final class Minekoth extends JavaPlugin {
     		if(sender instanceof Player == true) {
     			playerHandler.removePlayer(sender.getName());
     			gameManager.teleportToSpawn((Player) sender);
-;    			plugin.getCustomTab().updateTab();
+    			plugin.getCustomTab().updateTab();
     		} else {
     			sender.sendMessage("Sorry but this command is only for players");
     		}
@@ -254,6 +255,7 @@ public final class Minekoth extends JavaPlugin {
     	sqlDb.closeConnection();
     	
 		for (Player players : getServer().getOnlinePlayers()) {
+			gameManager.teleportToSpawn(players);
 			if (CommandExecutor.isSpectating.get(players.getName()) != null) {
 				if (CommandExecutor.isSpectating.get(players.getName())) {
 					players.sendMessage("You were forced to stop spectating because of a server reload.");
@@ -312,6 +314,10 @@ public final class Minekoth extends JavaPlugin {
     
     public Utilities getUtilities() {
     	return utilities;
+    }
+    
+    public ChatUpdater getChatUpdater() {
+    	return chatUpdater;
     }
 
 	public ArrayList<ArrowDataClass> getArrowsFired() {

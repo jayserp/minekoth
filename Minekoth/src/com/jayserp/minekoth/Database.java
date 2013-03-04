@@ -110,13 +110,13 @@ public class Database {
 			PreparedStatement ps = con.prepareStatement(query);
 			ps.setString(1, username);
 			ResultSet rs = ps.executeQuery();
-			plugin.getLogger().info("executed query");
-			System.out.println(String.valueOf(rs.next()));
 			while (rs.next()) { 
-				data.setId(rs.getInt("id"));
-				data.setUsername(rs.getString("username"));
-				data.setRank(rs.getInt("rank"));
-				return data;
+				if (rs.getString("username") != null) { 
+					data.setId(rs.getInt("id"));
+					data.setUsername(rs.getString("username"));
+					data.setRank(rs.getInt("rank"));
+					return data;
+				}
 			}
 			return null;
 

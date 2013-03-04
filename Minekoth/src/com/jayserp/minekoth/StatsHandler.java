@@ -23,8 +23,9 @@ public class StatsHandler {
 				PlayerDataClass temp = data.get(i);
 				UsersDataClass user = db.getUser(temp.getName());
 				long difference = System.currentTimeMillis() - temp.getTime();
-				plugin.getLogger().info(String.valueOf(difference));
+				plugin.getLogger().info("Processing stats for: " + temp.getName());
 				if(user != null) {
+					plugin.getLogger().info("User exists in database: " + user.getId());
 					SessionsDataClass s = new SessionsDataClass();
 					s.setGameId(gameId);
 					s.setPlayerId(user.getId());
@@ -43,8 +44,9 @@ public class StatsHandler {
 				} else {
 					UsersDataClass u = new UsersDataClass();
 					u.setUsername(temp.getName());
-					int userId = db.insertUser(u);
-					if (userId != -1) {			
+					int userId = db.insertUser(u);					
+					if (userId != -1) {	
+						plugin.getLogger().info("Created user in database: " + userId);
 						SessionsDataClass s = new SessionsDataClass();
 						s.setGameId(gameId);
 						s.setPlayerId(userId);

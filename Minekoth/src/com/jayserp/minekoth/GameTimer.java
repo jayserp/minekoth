@@ -21,6 +21,7 @@ public class GameTimer {
 				//return true if everything is fine
 				//pass time to allow capture tracking
 				plugin.getGameManager().checkStatus(time);
+				//plugin.getChatUpdater().update();
 				//System.out.println("Time: " + String.valueOf(time));
 				//System.out.println(String.valueOf(plugin.userList.size()));
 			}

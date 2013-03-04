@@ -52,7 +52,7 @@ public class PlayerListeners implements Listener {
 	}
 	
 	@EventHandler(priority = EventPriority.HIGHEST)
-	public void preventArmor(InventoryClickEvent evt) {
+	private void preventArmor(InventoryClickEvent evt) {
 		//plugin.getLogger().info(evt.getView().getType().getDefaultTitle());
 		if (evt.getView().getType() == InventoryType.CRAFTING) {
 			//plugin.getLogger().info("inventory click " + evt.getSlot());
@@ -64,7 +64,7 @@ public class PlayerListeners implements Listener {
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST)
-	public void onPlayerJoin(PlayerJoinEvent evt) {
+	private void onPlayerJoin(PlayerJoinEvent evt) {
 		final Player p = evt.getPlayer();
 		p.sendMessage("Welcome to jayserp's Minekoth. Type" + 
 									" /red <class> or /blue <class> to join a team.");
@@ -77,7 +77,7 @@ public class PlayerListeners implements Listener {
 	}
 	
 	@EventHandler(priority = EventPriority.HIGHEST)
-	public void onPlayerQuit(PlayerQuitEvent evt) {	
+	private void onPlayerQuit(PlayerQuitEvent evt) {	
 		plugin.getPlayerLocationListener()
 		  .removePlayerFromPoint(plugin.getPlayerHandler()
 									   .findPlayer(evt.getPlayer()
@@ -85,12 +85,12 @@ public class PlayerListeners implements Listener {
 		
 		if (plugin.getPlayerHandler().findPlayer(evt.getPlayer().getDisplayName()) != null) {
 			plugin.getPlayerHandler().removePlayer(evt.getPlayer().getDisplayName());
-			plugin.getLogger().info("removed " + evt.getPlayer().getDisplayName() + " from the game.");
+			//plugin.getLogger().info("removed " + evt.getPlayer().getDisplayName() + " from the game.");
 		}
 	}
 	
 	@EventHandler(priority = EventPriority.HIGHEST)
-	public void onPlayerKick(PlayerKickEvent evt) {
+	private void onPlayerKick(PlayerKickEvent evt) {
 		plugin.getPlayerLocationListener()
 		  .removePlayerFromPoint(plugin.getPlayerHandler()
 									   .findPlayer(evt.getPlayer()
@@ -98,12 +98,12 @@ public class PlayerListeners implements Listener {
 		
 		if (plugin.getPlayerHandler().findPlayer(evt.getPlayer().getDisplayName()) != null) {
 			plugin.getPlayerHandler().removePlayer(evt.getPlayer().getDisplayName());
-			plugin.getLogger().info("removed " + evt.getPlayer().getDisplayName() + " from the game.");
+			//plugin.getLogger().info("removed " + evt.getPlayer().getDisplayName() + " from the game.");
 		}
 	}
 	
 	@EventHandler(priority = EventPriority.HIGHEST)
-	public void onNameTag(PlayerReceiveNameTagEvent evt) {
+	private void onNameTag(PlayerReceiveNameTagEvent evt) {
 		String target = evt.getNamedPlayer().getName();	
 		String user = evt.getPlayer().getDisplayName();
 		PlayerDataClass targetData = plugin.getPlayerHandler().findPlayer(target);
@@ -144,7 +144,7 @@ public class PlayerListeners implements Listener {
 	}
 	
 	@EventHandler(priority = EventPriority.HIGHEST)
-	public void onProjectileLaunch(ProjectileLaunchEvent evt){
+	private void onProjectileLaunch(ProjectileLaunchEvent evt){
 	    if(evt.getEntity() instanceof Arrow){
 	        Arrow arrow = (Arrow) evt.getEntity();
 	        if(arrow.getShooter() instanceof Player){
@@ -185,7 +185,7 @@ public class PlayerListeners implements Listener {
 	}
 	
 	@EventHandler(priority = EventPriority.HIGHEST)
-	public void onShootBow(EntityShootBowEvent evt) {
+	private void onShootBow(EntityShootBowEvent evt) {
 		 if(!(evt.getEntity() instanceof Player)) {
 			 return;
 		 }
@@ -202,7 +202,7 @@ public class PlayerListeners implements Listener {
 	}
 	
     @EventHandler(priority = EventPriority.NORMAL)
-    public void onProjectileHit(ProjectileHitEvent evt){
+    private void onProjectileHit(ProjectileHitEvent evt){
 		 if(!(evt.getEntity() instanceof Arrow)) {
 			 return;
 		 }
@@ -218,7 +218,7 @@ public class PlayerListeners implements Listener {
     }
 	
 	@EventHandler(priority = EventPriority.HIGHEST)
-	public void onInteract(PlayerInteractEvent event) {
+	private void onInteract(PlayerInteractEvent event) {
 	    final Player player = event.getPlayer();
 	    PlayerDataClass playerData = plugin.getPlayerHandler().findPlayer(player.getDisplayName());
 	    
@@ -371,7 +371,7 @@ public class PlayerListeners implements Listener {
 	}
 	
 	@EventHandler(priority = EventPriority.HIGHEST)
-	public void onEntityDamage(EntityDamageEvent evt) {
+	private void onEntityDamage(EntityDamageEvent evt) {
 		if (!(evt.getEntity() instanceof Player)) {
 			return;
 		}
@@ -398,7 +398,7 @@ public class PlayerListeners implements Listener {
 	}
 	
 	@EventHandler(priority = EventPriority.HIGHEST)
-	public void onPlayerDamage(EntityDamageByEntityEvent evt) {
+	private void onPlayerDamage(EntityDamageByEntityEvent evt) {
 		if (evt.getEntity() instanceof Player && evt.getDamager() instanceof Player) {
 			Player player = (Player) evt.getEntity();
 			PlayerDataClass playerData = plugin.getPlayerHandler()
@@ -447,7 +447,7 @@ public class PlayerListeners implements Listener {
 	}
 	
 	@EventHandler(priority = EventPriority.HIGHEST)
-	public void onPlayerRespawn(final PlayerRespawnEvent evt) {		
+	private void onPlayerRespawn(final PlayerRespawnEvent evt) {		
 		Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable(){			 
             public void run(){   
         		PlayerDataClass playerData = plugin.getPlayerHandler().findPlayer(evt.getPlayer().getDisplayName());
@@ -462,7 +462,7 @@ public class PlayerListeners implements Listener {
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST)
-	public void onDeath(PlayerDeathEvent evt) {
+	private void onDeath(PlayerDeathEvent evt) {
 		evt.getDrops().clear();
 		
 		final Player player = evt.getEntity().getPlayer();

@@ -7,7 +7,6 @@ import org.bukkit.DyeColor;
 import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
-import org.kitteh.tag.TagAPI;
 
 /*
  * This is the Game Manager. It deals with the game logic as well as
@@ -153,7 +152,7 @@ public class GameManager {
 		if ((timeToEndRed == 180 || timeToEndBlue == 180 
 				|| timeToEndRed == 90 || timeToEndBlue == 90
 				|| timeToEndRed == 30 || timeToEndBlue == 30
-				|| timeToEndRed <= 10 || timeToEndBlue <= 10) && hasGameFinished == false) {
+				|| timeToEndRed <= 5 || timeToEndBlue <= 5) && hasGameFinished == false) {
 			if (timeToEndRed != 0 || timeToEndBlue != 0) {
 
 				plugin.getServer().broadcastMessage("Remaining Time - "
@@ -166,6 +165,10 @@ public class GameManager {
 				}*/
 			}
 		}
+	}
+	
+	public boolean hasTeamWon() {
+		return hasTeamWon;
 	}
 
 	/**

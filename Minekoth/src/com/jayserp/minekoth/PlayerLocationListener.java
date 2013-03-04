@@ -51,10 +51,10 @@ public class PlayerLocationListener implements Listener {
     	Player player = event.getPlayer();	    	
     	PlayerDataClass playerGame = plugin.getPlayerHandler().findPlayer(player.getDisplayName());
     
-        if(isInside(player.getLocation(), new Location(player.getWorld(), 4, 7, 3), 
+        if (isInside(player.getLocation(), new Location(player.getWorld(), 4, 7, 3), 
         		new Location(player.getWorld(), -3, 2, -2)) == true) {
         	if(inside.contains(event.getPlayer().getName()) == false && 
-        			plugin.getPlayerHandler().findPlayer(player.getDisplayName()) != null) {
+        			playerGame != null) {
         		
         		if (playerGame.getType().equals("spy") && playerGame.getDisguised() != null) {
         			removePlayerFromPoint(playerGame);
