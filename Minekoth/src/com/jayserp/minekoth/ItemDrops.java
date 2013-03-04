@@ -32,8 +32,7 @@ public class ItemDrops implements Listener {
 			if (ammoPacks.get(i) != null) {
 				spawnAmmoPack(ammoPacks.get(i));
 			}
-		}
-		
+		}		
 	}
 	
 	/*@EventHandler(priority = EventPriority.HIGHEST)

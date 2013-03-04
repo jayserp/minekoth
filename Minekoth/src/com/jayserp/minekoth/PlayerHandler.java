@@ -276,7 +276,7 @@ public class PlayerHandler {
 		List<ItemStack> inv = new ArrayList<ItemStack>();				
 		inv.add(new ItemStack(Material.IRON_SWORD, 1));
 		inv.add(new ItemStack(Material.BOW, 1));
-		inv.add(new ItemStack(Material.ARROW, 25));
+		inv.add(new ItemStack(Material.ARROW, 32));
 		ItemStack[] newStack = inv.toArray(new ItemStack[inv.size()]);
 		
 		plugin.getServer().getPlayer(player).getInventory().clear();

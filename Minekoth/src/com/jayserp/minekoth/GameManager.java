@@ -155,10 +155,15 @@ public class GameManager {
 				|| timeToEndRed == 30 || timeToEndBlue == 30
 				|| timeToEndRed <= 10 || timeToEndBlue <= 10) && hasGameFinished == false) {
 			if (timeToEndRed != 0 || timeToEndBlue != 0) {
+
 				plugin.getServer().broadcastMessage("Remaining Time - "
 												  + ChatColor.RED + "Red: " + timeToEndRed + "s"
 												  + ChatColor.GRAY + " | "
 												  + ChatColor.BLUE + "Blue: " + timeToEndBlue + "s");
+				/*if (timeToEndRed > 10 || timeToEndBlue > 10) {
+					timeToEndRed--;
+					timeToEndBlue--;
+				}*/
 			}
 		}
 	}

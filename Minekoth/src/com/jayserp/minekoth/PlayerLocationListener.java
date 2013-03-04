@@ -108,7 +108,9 @@ public class PlayerLocationListener implements Listener {
         	   		setPoint(DyeColor.BLUE);
         		}
         		
-            	if (bluePlayersOnPoint.size() == redPlayersOnPoint.size()) {
+            	if (bluePlayersOnPoint.size() == redPlayersOnPoint.size() && 
+            			bluePlayersOnPoint.size() >= 1 &&
+            			redPlayersOnPoint.size() >= 1) {
             		plugin.getServer().broadcastMessage("Defend the point!");
             		plugin.getGameManager().deregisterCapture("red");
             		plugin.getGameManager().deregisterCapture("blue");

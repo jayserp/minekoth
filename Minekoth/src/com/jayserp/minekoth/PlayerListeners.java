@@ -31,6 +31,8 @@ import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.potion.PotionEffect;
@@ -47,6 +49,18 @@ public class PlayerListeners implements Listener {
 	
 	public PlayerListeners(Minekoth plugin) {
 		this.plugin = plugin;
+	}
+	
+	@EventHandler(priority = EventPriority.HIGHEST)
+	public void preventArmor(InventoryClickEvent evt) {
+		//plugin.getLogger().info(evt.getView().getType().getDefaultTitle());
+		if (evt.getView().getType() == InventoryType.CRAFTING) {
+			//plugin.getLogger().info("inventory click " + evt.getSlot());
+			if (evt.getSlot() == 39 || evt.getSlot() == 38 ||
+					evt.getSlot() == 37 || evt.getSlot() == 36) {
+				evt.setCancelled(true);
+			}
+		}
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST)
@@ -154,7 +168,7 @@ public class PlayerListeners implements Listener {
 	        	            shooter.getLocation().getDirection(), 0.6f, 1);
 	        	            sniperArrow.setShooter(shooter);
 	        	            sniperArrow.setBounce(false);
-	        	            sniperArrow.setVelocity(shooter.getLocation().getDirection().normalize().multiply(12)); 
+	        	            sniperArrow.setVelocity(shooter.getLocation().getDirection().normalize().multiply(15)); 
 	            		}
 	            		if (shooterData.getType().equalsIgnoreCase("soldier")) {
 	            			arrow.setMetadata("rocket", new FixedMetadataValue(plugin, true));
