@@ -195,7 +195,7 @@ public class PlayerListeners implements Listener {
 				 							.findPlayer(player.getDisplayName());
 		 
 		 if (playerData != null) {
-			 if (playerData.getType().equals("sniper") && evt.getForce() == 1) {
+			 if (playerData.getType().equals("sniper") && evt.getForce() == 1 && playerData.isScoped() == true) {
 				 evt.getProjectile().setMetadata("charged", new FixedMetadataValue(plugin, true));
 			 }
 		 }
