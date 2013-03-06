@@ -164,7 +164,7 @@ public class SpectateCommandExecutor implements CommandExecutor {
 				if (args[0].equalsIgnoreCase("inv")) {
 					if (isSpectating.get(cmdsender.getName()) != null) {
 						if (isSpectating.get(cmdsender.getName())) {
-							cmdsender.sendMessage("���cError: You can not change this setting while spectating.");
+							cmdsender.sendMessage("Error: You can not change this setting while spectating.");
 							return true;
 						}
 					}
