@@ -1,6 +1,5 @@
 package com.jayserp.minekoth;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
@@ -13,8 +12,6 @@ import org.bukkit.Material;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.Projectile;
-import org.bukkit.entity.Snowball;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -211,9 +208,17 @@ public class PlayerListeners implements Listener {
 			 plugin.getServer().getWorld("world").createExplosion(arrow.getLocation().getX(),
 					 											  arrow.getLocation().getY(),
 					 											  arrow.getLocation().getZ(),
-					 											  2, false, false);
+					 											  7, false, false);
+			 
+			 for (Entity nearby : arrow.getNearbyEntities(3, 3, 3)) {
+				 if (!(nearby instanceof Player)) {
+					 return;
+				 }
+				 Player player = (Player) nearby;
+				 player.damage(8, arrow.getShooter());
+			 }
 			 plugin.getArrowsFired().remove(evt.getEntity());
-			 arrow.remove();
+			 arrow.remove();			 
 		 }
     }
 	
@@ -236,10 +241,10 @@ public class PlayerListeners implements Listener {
 			    													player.getLocation().getZ(),
 			    													0);
 		
-			    	double rotation = player.getLocation().getPitch();
+			    	//double rotation = player.getLocation().getPitch();
 			        	
-			    	double jumpFactor = -(rotation / 20);
-			    	double distanceFactor = -((90 - rotation) * 10);
+			    	//double jumpFactor = -(rotation / 20);
+			    	//double distanceFactor = -((90 - rotation) * 10);
 	
 					Vector newDirection = player.getVelocity();
 					inJump.put(player, true);

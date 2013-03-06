@@ -20,7 +20,7 @@ public class BlockListener implements Listener {
 	public void onBlockBreak(BlockBreakEvent e){
 		
 		List<PlayerDataClass> userList = plugin.getUserList();
-		//iterate through player list (userList) and check if player is in game
+		//iterate through player list (userList) and check if player is in game		
 		if (userList != null) {
 			for (int i = 0; i < userList.size(); i++) {
 				PlayerDataClass tempPlayerData = userList.get(i);
@@ -30,8 +30,7 @@ public class BlockListener implements Listener {
 				} else {
 					//allow them to break blocks
 				}
-			}
-			
+			}			
 		}
 	}
 }

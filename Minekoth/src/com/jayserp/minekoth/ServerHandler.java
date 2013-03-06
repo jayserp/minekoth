@@ -21,8 +21,8 @@ public class ServerHandler implements Listener {
 	
 	@EventHandler(priority = EventPriority.HIGHEST)
 	private void checkUser(AsyncPlayerPreLoginEvent evt) {
-		if (plugin.getServer().getOnlinePlayers().length >= 0) {
-			plugin.getLogger().info("people on server >= 0, retrieving user: " + evt.getName());
+		if (plugin.getServer().getOnlinePlayers().length >= 24) {
+			plugin.getLogger().info("people on server >= 24, retrieving user: " + evt.getName());
 			UsersDataClass user = plugin.getSqlDb().getUser(evt.getName());
 			if (user != null) {
 				plugin.getLogger().info("rank: " + user.getRank());

@@ -242,7 +242,7 @@ public class PlayerHandler {
 			plugin.getPlayerListener().setUnscoped(plugin.getServer().getPlayer(player.getName()), player);
 			
 			if(player.getType().equals("scout")) {
-				plugin.getServer().getPlayer(player.getName()).setWalkSpeed((float) 0.35);
+				plugin.getServer().getPlayer(player.getName()).setWalkSpeed((float) 0.38);
 			} else {
 				plugin.getServer().getPlayer(player.getName()).setWalkSpeed((float) 0.25);
 			}
