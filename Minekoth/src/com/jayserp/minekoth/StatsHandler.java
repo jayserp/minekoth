@@ -33,12 +33,14 @@ public class StatsHandler {
 					s.setDeaths(temp.getDeaths());
 					s.setTime(difference);
 					s.setPoints((temp.getKills() * 4) - temp.getDeaths());
-					if (temp.getTeam() == winner) {
-						s.setWins(1);
-						s.setLosses(0);
-					} else {
-						s.setWins(0);
-						s.setLosses(1);
+					if (temp.getTeam() != null) {
+						if (temp.getTeam() == winner) {
+							s.setWins(1);
+							s.setLosses(0);
+						} else {
+							s.setWins(0);
+							s.setLosses(1);
+						}
 					}
 					db.insertSession(s);				
 				} else {
@@ -54,12 +56,14 @@ public class StatsHandler {
 						s.setDeaths(temp.getDeaths());
 						s.setTime(difference);
 						s.setPoints((temp.getKills() * 4) - temp.getDeaths());
-						if (temp.getTeam() == winner) {
-							s.setWins(1);
-							s.setLosses(0);
-						} else {
-							s.setWins(0);
-							s.setLosses(1);
+						if (temp.getTeam() != null) {
+							if (temp.getTeam() == winner) {
+								s.setWins(1);
+								s.setLosses(0);
+							} else {
+								s.setWins(0);
+								s.setLosses(1);
+							}
 						}
 						db.insertSession(s);
 					} else {

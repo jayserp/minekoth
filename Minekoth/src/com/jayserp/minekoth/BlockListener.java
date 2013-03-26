@@ -1,7 +1,5 @@
 package com.jayserp.minekoth;
 
-import java.util.List;
-
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
@@ -19,18 +17,20 @@ public class BlockListener implements Listener {
 	@EventHandler
 	public void onBlockBreak(BlockBreakEvent e){
 		
-		List<PlayerDataClass> userList = plugin.getUserList();
-		//iterate through player list (userList) and check if player is in game		
-		if (userList != null) {
-			for (int i = 0; i < userList.size(); i++) {
-				PlayerDataClass tempPlayerData = userList.get(i);
-				if (tempPlayerData.getName() == e.getPlayer().getDisplayName()) {
-					//don't allow to break blocks
-					e.setCancelled(true);
-				} else {
-					//allow them to break blocks
-				}
-			}			
+		PlayerDataClass playerData = plugin.getPlayerHandler().findPlayer(e.getPlayer().getDisplayName());
+		
+		if (playerData == null) {
+			e.setCancelled(true);
+		} else {
+			if (playerData.getTeam().equals("red") || playerData.getTeam().equals("blue")) {
+				e.setCancelled(true);
+				return;
+			}
+			if (playerData.getRank() > 90 && playerData.getTeam().equals("spec")) {
+				plugin.getLogger().info("admin breaking");
+				return;
+			}
+			e.setCancelled(true);
 		}
 	}
 }

@@ -56,6 +56,11 @@ public class ChatUpdater implements Listener {
 				plugin.getServer().broadcastMessage(ChatColor.BLUE + "<" + playerData.getName() + 
 						"> "  + ChatColor.WHITE + evt.getMessage());
 			}
+			
+			if (playerData.getTeam() == "spec") {
+				plugin.getServer().broadcastMessage(ChatColor.GRAY + "<" + playerData.getName() + 
+						"> "  + ChatColor.WHITE + evt.getMessage());
+			}
 		} else {
 			plugin.getServer().broadcastMessage(ChatColor.GRAY + "<" + evt.getPlayer().getDisplayName() + 
 					"> " + ChatColor.WHITE + evt.getMessage());

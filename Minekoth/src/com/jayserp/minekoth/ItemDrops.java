@@ -48,6 +48,11 @@ public class ItemDrops implements Listener {
             return;
         }
         
+        if (evt.getItem().hasMetadata("redsticky") ||
+        		evt.getItem().hasMetadata("bluesticky")) {
+        	evt.setCancelled(true);
+        }
+         
         if (evt.getItem().hasMetadata("mkhealth")) {
             if (evt.getPlayer().getHealth() == 20) {
          	   evt.setCancelled(true);

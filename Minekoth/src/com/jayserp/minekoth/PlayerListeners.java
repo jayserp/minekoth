@@ -6,11 +6,13 @@ import java.util.Random;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.DyeColor;
 import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -31,6 +33,7 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.material.Dye;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -62,12 +65,25 @@ public class PlayerListeners implements Listener {
 
 	@EventHandler(priority = EventPriority.HIGHEST)
 	private void onPlayerJoin(PlayerJoinEvent evt) {
+		
 		final Player p = evt.getPlayer();
-		p.sendMessage("Welcome to jayserp's Minekoth. Type" + 
-									" /red <class> or /blue <class> to join a team.");
-		plugin.getGameManager().teleportToSpawn(p);
+		
 		Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
 			public void run() {
+				
+				p.sendMessage("Welcome to jayserp's Minekoth. Type" + 
+						" /red <class> or /blue <class> to join a team.");
+				
+				UsersDataClass userData = plugin.getSqlDb().getUser(p.getDisplayName());
+				if (userData != null) {
+					plugin.getPlayerHandler().addSpecPlayer(p.getDisplayName(), userData.getRank());
+					if (userData.getRank() > 90) {
+						p.sendMessage("Welcome, admin.");
+					}
+				} else {
+					plugin.getPlayerHandler().addSpecPlayer(p.getDisplayName());
+				}
+								
 				plugin.getCustomTab().updateTab();
 			}
 		}, 3);
@@ -165,7 +181,7 @@ public class PlayerListeners implements Listener {
 	        	            shooter.getLocation().getDirection(), 0.6f, 1);
 	        	            sniperArrow.setShooter(shooter);
 	        	            sniperArrow.setBounce(false);
-	        	            sniperArrow.setVelocity(shooter.getLocation().getDirection().normalize().multiply(15)); 
+	        	            sniperArrow.setVelocity(shooter.getLocation().getDirection().normalize().multiply(10)); 
 	            		}
 	            		if (shooterData.getType().equalsIgnoreCase("soldier")) {
 	            			arrow.setMetadata("rocket", new FixedMetadataValue(plugin, true));
@@ -227,7 +243,7 @@ public class PlayerListeners implements Listener {
 	    final Player player = event.getPlayer();
 	    PlayerDataClass playerData = plugin.getPlayerHandler().findPlayer(player.getDisplayName());
 	    
-	    if (playerData != null) {
+	    if (playerData.getType() != null) {
 		    if (player.getItemInHand().getType() == Material.BOW && 
 		    		event.getAction() == Action.RIGHT_CLICK_BLOCK &&
 		    		(inJump.get(player) == null || inJump.get(player).equals(Boolean.FALSE)) &&
@@ -370,6 +386,67 @@ public class PlayerListeners implements Listener {
 		    		setScoped(player, playerData);
 		    	}
 		    }
+		    
+		    if (player.getItemInHand().getType() == Material.getMaterial(356) && 
+		    		(event.getAction() == Action.LEFT_CLICK_AIR ||
+		    		event.getAction() == Action.LEFT_CLICK_BLOCK) &&
+		    		playerData.getType().equalsIgnoreCase("demo")) {
+		    	plugin.getLogger().info("demo fired");
+		    	
+		    	Location stickyLocation = player.getEyeLocation();
+    			stickyLocation.setY(stickyLocation.getY() + 0.1);
+    			
+    			Item sticky;
+    			if (playerData.getTeam().equals("red")) {
+        			sticky = player.getWorld().dropItemNaturally(stickyLocation, 
+        					new ItemStack (Material.INK_SACK, 1, (short)0, (byte)(15 - DyeColor.RED.getData())));
+        			sticky.setMetadata("redsticky", new FixedMetadataValue(plugin, true));
+    			} else {
+        			sticky = player.getWorld().dropItemNaturally(stickyLocation, 
+        					new ItemStack (Material.INK_SACK, 1, (short)0, (byte)(15 - DyeColor.BLUE.getData())));
+        			sticky.setMetadata("bluesticky", new FixedMetadataValue(plugin, true));
+    			}
+    			
+    			
+    			//stickyBomb.setData(dye);
+	            //Item sticky = player.getWorld().dropItem(stickyLocation, stickyBomb);
+    			
+				sticky.setVelocity(player.getEyeLocation().getDirection());
+				
+				StickyDataClass stickyData = new StickyDataClass();
+				stickyData.setOwner(playerData.getName());
+				stickyData.setSticky(sticky);
+				stickyData.setTeam(playerData.getTeam());
+				plugin.getStickysFired().add(stickyData);
+		    }
+		    
+		    if (player.getItemInHand().getType() == Material.getMaterial(356) && 
+		    		(event.getAction() == Action.RIGHT_CLICK_AIR ||
+		    		event.getAction() == Action.RIGHT_CLICK_BLOCK) &&
+		    		playerData.getType().equalsIgnoreCase("demo")) {
+		    	plugin.getLogger().info("demo triggered");
+		    	event.setCancelled(true);
+		    	for (int i = 0; i < plugin.getStickysFired().size(); i++) {
+		    		StickyDataClass temp = plugin.getStickysFired().get(i);
+		    		plugin.getLogger().info(i + " Owner/Team " + temp.getOwner() + "/" + temp.getTeam());
+		    		if (temp.getOwner() == playerData.getName()) {
+		    				 plugin.getServer().getWorld("world").createExplosion(temp.getSticky().getLocation().getX(),
+		    						 											  temp.getSticky().getLocation().getY(),
+		    						 											  temp.getSticky().getLocation().getZ(),
+		    						 											  5, false, false);
+		    				 
+		    				 for (Entity nearby : temp.getSticky().getNearbyEntities(3, 3, 3)) {
+		    					 if (nearby instanceof Player) {
+		    						 Player nearbyPlayer = (Player) nearby;
+			    					 nearbyPlayer.damage(8, player);
+		    					 }		    					 
+		    				 }
+		    				 temp.getSticky().remove();	
+		    				 plugin.getStickysFired().remove(i);			 		 
+		    		}
+		    	}
+		    }
+		    
 	    } else {
 	    	return;
 	    }

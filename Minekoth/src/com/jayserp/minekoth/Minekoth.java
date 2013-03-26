@@ -62,6 +62,7 @@ public final class Minekoth extends JavaPlugin {
 	public boolean debug = true;
 	
 	private ArrayList<ArrowDataClass> arrowsFired;
+	private ArrayList<StickyDataClass> stickysFired;
 	
 	private List<PlayerDataClass> userList; //user list
 	
@@ -92,7 +93,8 @@ public final class Minekoth extends JavaPlugin {
 		customTab = new CustomTab(this);
 		
 		arrowsFired = new ArrayList<ArrowDataClass>();
-    	
+		stickysFired = new ArrayList<StickyDataClass>();
+		
     	getServer().getPluginManager().registerEvents(playerListener, this);
     	getServer().getPluginManager().registerEvents(playerLocationListener, this);
     	getServer().getPluginManager().registerEvents(blockListener, this);
@@ -126,6 +128,11 @@ public final class Minekoth extends JavaPlugin {
 		getCommand("spectate").setExecutor(CommandExecutor);
 		getCommand("spec").setExecutor(CommandExecutor);
 		
+		for (int i = 0; i < this.getServer().getOnlinePlayers().length; i++) {
+			Player player = this.getServer().getOnlinePlayers()[i];
+			getPlayerHandler().addSpecPlayer(player.getDisplayName());
+		}
+		
 		playerHandler.clearInventories();
     }
    
@@ -147,13 +154,14 @@ public final class Minekoth extends JavaPlugin {
     			if (split[0].equalsIgnoreCase("soldier") ||
     				split[0].equalsIgnoreCase("spy") ||
     				split[0].equalsIgnoreCase("sniper") ||
+    				split[0].equalsIgnoreCase("demo") ||
     				split[0].equalsIgnoreCase("scout")) {
 	       			getLogger().info(sender.getName() + " set to red " + split[0]);
 	        		playerHandler.addRedPlayer(sender.getName(), split[0]);
 	        		plugin.getCustomTab().updateTab();
 	        		TagAPI.refreshPlayer((Player) sender);
     			} else {
-    				sender.sendMessage("Classes available: soldier, spy, sniper, scout");
+    				sender.sendMessage("Classes available: soldier, spy, sniper, scout, demo");
     			}
 			} else {
 				sender.sendMessage("Sorry but this command is only for players");
@@ -174,13 +182,14 @@ public final class Minekoth extends JavaPlugin {
     			if (split[0].equalsIgnoreCase("soldier") ||
     				split[0].equalsIgnoreCase("spy") ||
     				split[0].equalsIgnoreCase("sniper") ||
+    				split[0].equalsIgnoreCase("demo") ||
     				split[0].equalsIgnoreCase("scout")) {
 	       			getLogger().info(sender.getName() + " set to blue " + split[0]);
 	       			playerHandler.addBluePlayer(sender.getName(), split[0]);
 	       			plugin.getCustomTab().updateTab();
 	       			TagAPI.refreshPlayer((Player) sender);
     			} else {
-    				sender.sendMessage("Classes available: soldier, spy, sniper, scout");
+    				sender.sendMessage("Classes available: soldier, spy, sniper, scout, demo");
     			}
     		} else {
     			sender.sendMessage("Sorry but this command is only for players");
@@ -190,8 +199,9 @@ public final class Minekoth extends JavaPlugin {
     	
     	if(cmd.getName().equalsIgnoreCase("leave")) { 
     		if(sender instanceof Player == true) {
-    			playerHandler.removePlayer(sender.getName());
-    			gameManager.teleportToSpawn((Player) sender);
+    			playerHandler.addSpecPlayer(sender.getName());
+    			//playerHandler.removePlayer(sender.getName());
+    			//gameManager.teleportToSpawn((Player) sender);
     			plugin.getCustomTab().updateTab();
     		} else {
     			sender.sendMessage("Sorry but this command is only for players");
@@ -212,37 +222,43 @@ public final class Minekoth extends JavaPlugin {
     	if(cmd.getName().equalsIgnoreCase("js")) {
     		//UsersDataClass data = database.getUser("jayserps");
 			//plugin.getLogger().info(String.valueOf(data.getId()));
-
-    				stats.logGame(userList, null);
-    	
-    		
+    			sqlDb.closeConnection();	
 			return true;
     	}
     	
     	if(cmd.getName().equalsIgnoreCase("lp")) { 
     		String redList = null;
     		String blueList = null;
+    		String specList = null;
     		for (int i = 0; i < userList.size(); i++) {
     			PlayerDataClass e = userList.get(i);
     			if (e != null) {
     				if (e.getTeam() == "red") {
     					if (redList == null) {
-    						redList = e.getName();
+    						redList = e.getName()  + "(" + e.getRank() + ")";
     					} else {
-    						redList = redList + ", " + e.getName();
+    						redList = redList + ", " + e.getName() + "(" + e.getRank() + ")";
     					}
     				}
     				if (e.getTeam() == "blue") {
     					if (blueList == null) {
-    						blueList = e.getName();
+    						blueList = e.getName() + "(" + e.getRank() + ")";
     					} else {
-    						blueList = blueList + ", " + e.getName();
+    						blueList = blueList + ", " + e.getName() + "(" + e.getRank() + ")";
+    					}
+    				}
+    				if (e.getTeam() == "spec") {
+    					if (specList == null) {
+    						specList = e.getName() + "(" + e.getRank() + ")";
+    					} else {
+    						specList = specList + ", " + e.getName() + "(" + e.getRank() + ")";
     					}
     				}
     			}
     		}
 			plugin.getServer().broadcastMessage(ChatColor.RED + "Red Team : " + redList);
 			plugin.getServer().broadcastMessage(ChatColor.BLUE + "Blue Team: " + blueList);
+			plugin.getServer().broadcastMessage(ChatColor.GRAY + "Spectators: " + specList);
     		return true;
     	}
     	return false; 
@@ -322,5 +338,9 @@ public final class Minekoth extends JavaPlugin {
 
 	public ArrayList<ArrowDataClass> getArrowsFired() {
 		return arrowsFired;
+	}
+	
+	public ArrayList<StickyDataClass> getStickysFired() {
+		return stickysFired;
 	}
 }

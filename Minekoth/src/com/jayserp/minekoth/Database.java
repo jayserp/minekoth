@@ -104,6 +104,14 @@ public class Database {
 	}
 	
 	public UsersDataClass getUser(String username) {
+		try {
+			if (!(con.isValid(0))) {
+				con = DriverManager.getConnection(url+db, "root", "");
+			}
+		} catch (SQLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 		UsersDataClass data = new UsersDataClass();
 		try {
 			String query = "SELECT * FROM players WHERE username=?";

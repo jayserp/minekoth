@@ -40,9 +40,18 @@ public class ServerHandler implements Listener {
 				evt.disallow(AsyncPlayerPreLoginEvent.Result.KICK_FULL, "Server Full. To ensure a guaranteed slot, " +
 						"donate at www.minekoth.com");
 			}
-			
+		}
+		
+		UsersDataClass userData = plugin.getSqlDb().getUser(evt.getName());
+		
+		if (userData != null) {
+			if (userData.getRank() < 10) {
+				evt.disallow(AsyncPlayerPreLoginEvent.Result.KICK_WHITELIST, "This server is only open to beta testers. " +
+						"To request beta access, contact jay@jayserp.com");
+			}
 		} else {
-			return;
+			evt.disallow(AsyncPlayerPreLoginEvent.Result.KICK_WHITELIST, "This server is only open to beta testers. " +
+					"To request beta access, contact jay@jayserp.com");
 		}
 	}
 	

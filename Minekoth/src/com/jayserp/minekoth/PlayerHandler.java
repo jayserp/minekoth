@@ -11,6 +11,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
+import org.kitteh.tag.TagAPI;
 
 public class PlayerHandler {
 	
@@ -20,94 +21,121 @@ public class PlayerHandler {
 		this.plugin = plugin;
 	}
 	
-	public void addRedPlayer(String playerName, String type) {
-		//add a red player to the user list.
+	public void addSpecPlayer (String playerName, int rank) {
+		PlayerDataClass player = findPlayer(playerName);
 		
-			PlayerDataClass player = findPlayer(playerName);
-			
-			if (player == null) {
-				PlayerDataClass e = new PlayerDataClass();
-				e.setName(playerName);
-				e.setTeam("red");
-				e.setScore(0);
-				e.setType(type);
-				if (e.getRank() < 0) {
-					e.setRank(0);
-				}
-
-				if (getRedPlayers().size() <= getBluePlayers().size()) {
-					/*giveArmor(playerName, "red");
-					giveWeapons(playerName);*/
-					plugin.getUserList().add(e);
-		    		plugin.getServer().broadcastMessage(ChatColor.YELLOW + playerName + ChatColor.WHITE +
-						" joined the " + ChatColor.RED + "RED" + ChatColor.WHITE + 
-						" team.");
-					
-					if (plugin.getGameManager().hasGameStarted() == true) {
-						spawnPlayer(findPlayer(playerName));
-					}
-				} else {
-					plugin.getServer().getPlayer(playerName).sendMessage("The red team is full, " +
-							"please join blue team.");
-				}				
-			} else {
-				if (player.getTeam() == "blue" || !player.getType().equals(type)) {
-					if (player.getTeam().equals("red")) {
-						plugin.getPlayerLocationListener()
-						  .removePlayerFromPoint(player);
-						plugin.getUserList().get(findPlayerId(playerName)).setType(type);
-						plugin.getServer().getPlayer(playerName).sendMessage("Changed class to: " + type);						
-						if (plugin.getGameManager().hasGameStarted() == true) {
-							spawnPlayer(findPlayer(playerName));
-						}
-					}
-
-					if (getRedPlayers().size() < getBluePlayers().size()) {
-						/*giveArmor(playerName, "red");
-						giveWeapons(playerName);*/
-						plugin.getPlayerLocationListener()
-						  .removePlayerFromPoint(player);
-						plugin.getUserList().get(findPlayerId(playerName)).setTeam("red");
-						plugin.getUserList().get(findPlayerId(playerName)).setType(type);
-			    		plugin.getServer().broadcastMessage(ChatColor.YELLOW + playerName + ChatColor.WHITE +
-								" changed to the " + ChatColor.RED + "RED" + ChatColor.WHITE + 
-								" team.");	 
-			    		
-						if (plugin.getGameManager().hasGameStarted() == true) {
-							spawnPlayer(findPlayer(playerName));
-						}
-					} else {
-						if (!player.getTeam().equals("red")) {
-							plugin.getServer().getPlayer(playerName).sendMessage("Cannot change team: " +
-									"the red team is full.");
-						}
-					}
-				} else {
-					plugin.getServer().getPlayer(playerName).sendMessage("You have already joined " +
-							"the red team.");
-				}
-			}
+		if (player == null) {		
+			PlayerDataClass e = new PlayerDataClass();
+			e.setName(playerName);
+			e.setTeam("spec");
+			e.setScore(0);
+			e.setType(null);
+			e.setRank(rank);
+			plugin.getUserList().add(e);
+			plugin.getGameManager().teleportToSpawn(plugin.getServer().getPlayer(playerName));
+		} else {
+			plugin.getUserList().get(plugin.getPlayerHandler().findPlayerId(playerName)).setRank(rank);
+			plugin.getUserList().get(plugin.getPlayerHandler().findPlayerId(playerName)).setTeam("spec");
+			plugin.getGameManager().teleportToSpawn(plugin.getServer().getPlayer(playerName));
+		}
 	}
 	
-	public void addBluePlayer(String playerName, String type) {
-		//add a blue player to the user list.
-
+	public void addSpecPlayer (String playerName) {
 		PlayerDataClass player = findPlayer(playerName);
 		
 		if (player == null) {
 			PlayerDataClass e = new PlayerDataClass();
 			e.setName(playerName);
-			e.setTeam("blue");
+			e.setTeam("spec");
 			e.setScore(0);
-			e.setType(type);
+			e.setType(null);
 			if (e.getRank() < 0) {
 				e.setRank(0);
 			}
+			plugin.getUserList().add(e);
+			plugin.getGameManager().teleportToSpawn(plugin.getServer().getPlayer(playerName));
+		} else {
+			plugin.getPlayerLocationListener()
+			  .removePlayerFromPoint(player);
+			plugin.getGameManager().teleportToSpawn(plugin.getServer().getPlayer(playerName));
+			plugin.getServer().broadcastMessage(ChatColor.YELLOW + playerName + ChatColor.WHITE +
+					" is now spectating.");
+			plugin.getUserList().get(findPlayerId(playerName)).setTeam("spec");
+			plugin.getUserList().get(findPlayerId(playerName)).setType(null);
+		}
+	}
+	
+	public void addRedPlayer(String playerName, String type) {
+		//add a red player to the user list.	
+		PlayerDataClass player = findPlayer(playerName);	
+		if (player.getTeam() == "spec") {
+			if (getRedPlayers().size() <= getBluePlayers().size()) {
+				plugin.getUserList().get(findPlayerId(playerName)).setTeam("red");
+				plugin.getUserList().get(findPlayerId(playerName)).setType(type);
+				
+		    	plugin.getServer().broadcastMessage(ChatColor.YELLOW + playerName + ChatColor.WHITE +
+					" joined the " + ChatColor.RED + "RED" + ChatColor.WHITE + 
+					" team.");
+		    		
+				if (plugin.getGameManager().hasGameStarted() == true) {
+					spawnPlayer(findPlayer(playerName));
+				}
+			} else {
+				plugin.getServer().getPlayer(playerName).sendMessage("The red team is full, " +
+						"please join blue team.");
+			}				
+		} else {
+			if (player.getTeam() == "blue" || !player.getType().equals(type)) {
+				if (player.getTeam().equals("red")) {
+					plugin.getPlayerLocationListener()
+					  .removePlayerFromPoint(player);
+					plugin.getUserList().get(findPlayerId(playerName)).setType(type);
+					plugin.getServer().getPlayer(playerName).sendMessage("Changed class to: " + type);						
+					if (plugin.getGameManager().hasGameStarted() == true) {
+						spawnPlayer(findPlayer(playerName));
+					}
+				}
+
+				if (getRedPlayers().size() < getBluePlayers().size()) {
+					plugin.getPlayerLocationListener()
+					  .removePlayerFromPoint(player);
+					plugin.getUserList().get(findPlayerId(playerName)).setTeam("red");
+					plugin.getUserList().get(findPlayerId(playerName)).setType(type);
+			   		plugin.getServer().broadcastMessage(ChatColor.YELLOW + playerName + ChatColor.WHITE +
+							" changed to the " + ChatColor.RED + "RED" + ChatColor.WHITE + 
+							" team.");	 
+		    		
+					if (plugin.getGameManager().hasGameStarted() == true) {
+						spawnPlayer(findPlayer(playerName));
+					}
+				} else {
+					if (!player.getTeam().equals("red")) {
+						plugin.getServer().getPlayer(playerName).sendMessage("Cannot change team: " +
+								"the red team is full.");
+					}
+				}
+			} else {
+				plugin.getServer().getPlayer(playerName).sendMessage("You have already joined " +
+						"the red team.");
+			}
+		}
+		refreshTagsFor(plugin.getServer().getPlayer(playerName));
+	}
+	
+	public void addBluePlayer(String playerName, String type) {
+		//add a blue player to the user list.
+		PlayerDataClass player = findPlayer(playerName);
+		
+		if (player.getTeam() == "spec") {
 
 			if (getBluePlayers().size() <= getRedPlayers().size()) {
 				/*giveArmor(playerName, "blue");
 				giveWeapons(playerName);*/
-				plugin.getUserList().add(e);
+				//plugin.getUserList().add(e);
+				
+				plugin.getUserList().get(findPlayerId(playerName)).setTeam("blue");
+				plugin.getUserList().get(findPlayerId(playerName)).setType(type);
+				
 	    		plugin.getServer().broadcastMessage(ChatColor.YELLOW + playerName + ChatColor.WHITE +
 						" joined the " + ChatColor.BLUE + "BLUE" + ChatColor.WHITE + 
 						" team.");
@@ -157,6 +185,7 @@ public class PlayerHandler {
 						"the blue team.");
 			}
 		}
+		refreshTagsFor(plugin.getServer().getPlayer(playerName));
 	}
 	
 	public List<PlayerDataClass> getRedPlayers() {
@@ -192,6 +221,7 @@ public class PlayerHandler {
 				plugin.getServer().getPlayer(playerName).getInventory().setArmorContents(null);
 				plugin.getServer().getPlayer(playerName).getInventory().clear();
 				plugin.getUserList().remove(i);
+				plugin.getCustomTab().updateTab();
 			}
 		}
 	}
@@ -248,13 +278,13 @@ public class PlayerHandler {
 			}
 			
 			if (player.getTeam() == "red") {
-				giveWeapons(player.getName());
+				giveWeapons(player.getName(), player.getType());
 				giveArmor(player.getName(), "red");
 				teleport(player.getName(), "red");
 			}
 		
 			if (player.getTeam() == "blue") {
-				giveWeapons(player.getName());
+				giveWeapons(player.getName(), player.getType());
 				giveArmor(player.getName(), "blue");
 				teleport(player.getName(), "blue");
 			}
@@ -272,11 +302,19 @@ public class PlayerHandler {
 		plugin.getServer().getPlayer(player).teleport(location);
 	}
 	
-	public void giveWeapons(String player) {		
-		List<ItemStack> inv = new ArrayList<ItemStack>();				
-		inv.add(new ItemStack(Material.IRON_SWORD, 1));
-		inv.add(new ItemStack(Material.BOW, 1));
-		inv.add(new ItemStack(Material.ARROW, 32));
+	public void giveWeapons(String player, String playerType) {
+		
+		List<ItemStack> inv = new ArrayList<ItemStack>();
+		if (playerType.equals("demo")) {					
+			inv.add(new ItemStack(Material.IRON_SWORD, 1));
+			inv.add(new ItemStack(Material.getMaterial(356), 1));
+			inv.add(new ItemStack(Material.ARROW, 32));	
+		} else {				
+			inv.add(new ItemStack(Material.IRON_SWORD, 1));
+			inv.add(new ItemStack(Material.BOW, 1));
+			inv.add(new ItemStack(Material.ARROW, 32));	
+		}
+		
 		ItemStack[] newStack = inv.toArray(new ItemStack[inv.size()]);
 		
 		plugin.getServer().getPlayer(player).getInventory().clear();
@@ -333,6 +371,15 @@ public class PlayerHandler {
 		}
 		boots.setItemMeta(lamb);
 		plugin.getServer().getPlayer(player).getInventory().setBoots(boots);
+	}
+	
+	public void refreshTagsFor(Player player) {
+		for (int i = 0; i < plugin.getServer().getOnlinePlayers().length; i++) {
+			Player updatedPlayer = plugin.getServer().getOnlinePlayers()[i];
+			if (updatedPlayer != player) {
+				TagAPI.refreshPlayer(updatedPlayer, player);
+			}
+		}
 	}
 	
 }
