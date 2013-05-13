@@ -231,7 +231,11 @@ public class PlayerListeners implements Listener {
 					 return;
 				 }
 				 Player player = (Player) nearby;
-				 player.damage(8, arrow.getShooter());
+				 if (player == (Player) arrow.getShooter()) {
+					 player.damage(2, arrow.getShooter());
+				 } else {
+					 player.damage(8, arrow.getShooter());
+				 }
 			 }
 			 plugin.getArrowsFired().remove(evt.getEntity());
 			 arrow.remove();			 
