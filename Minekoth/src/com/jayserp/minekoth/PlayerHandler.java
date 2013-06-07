@@ -294,10 +294,12 @@ public class PlayerHandler {
 	public void teleport(String player, String team) {
 		Location location = null;
 		if (team == "red") {
-			location = new Location(plugin.getServer().getWorld("world"), 49,5,0);	
+			//location = new Location(plugin.getServer().getWorld("world"), 49,5,0);
+			location = new Location(plugin.getServer().getWorld("world"), 1181,54,165);
 		} 
 		if (team == "blue") {
-			location = new Location(plugin.getServer().getWorld("world"), -49,5,0);
+			//location = new Location(plugin.getServer().getWorld("world"), -49,5,0);
+			location = new Location(plugin.getServer().getWorld("world"), 1182,54,252);
 		}			
 		plugin.getServer().getPlayer(player).teleport(location);
 	}

@@ -312,6 +312,7 @@ public class GameManager {
     }
     
     public void teleportToSpawn(Player player) {
-    	player.teleport(new Location((plugin.getServer().getWorld("world")), 0, 5, -47));
+    	//player.teleport(new Location((plugin.getServer().getWorld("world")), 0, 5, -47));
+    	player.teleport(new Location((plugin.getServer().getWorld("world")), 1220, 5, 179));
     }
 }

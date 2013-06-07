@@ -24,6 +24,12 @@ public class PlayerLocationListener implements Listener {
 
 	private HashMap<Player, Object> inJump = new HashMap<Player, Object>();
 	
+	//private Location capBoundaryA = new Location(plugin.getServer().getWorld("world"), 4, 7, 3);
+	//private Location capBoundaryB = new Location(plugin.getServer().getWorld("world"), -3, 2, -2);
+	
+	private Location capBoundaryA;
+	private Location capBoundaryB;
+	
 	public PlayerLocationListener(Minekoth plugin) {
 		this.plugin = plugin;
 		inside = new ArrayList<String>();
@@ -34,7 +40,11 @@ public class PlayerLocationListener implements Listener {
 		redPlayersOnPoint = new ArrayList<String>();
 		bluePlayersOnPoint = new ArrayList<String>();
 		
+		capBoundaryA = new Location(plugin.getServer().getWorld("world"), 1146, 47, 206);
+		capBoundaryB = new Location(plugin.getServer().getWorld("world"), 1141, 40, 202);
+		
 		//define capture point
+		/* for KOTH_HARVEST
 		cpBlocks.add(new Location(plugin.getServer().getWorld("world"), -1, 3,  1));
 		cpBlocks.add(new Location(plugin.getServer().getWorld("world"),  0, 3,  1));
 		cpBlocks.add(new Location(plugin.getServer().getWorld("world"),  1, 3,  1));
@@ -44,6 +54,17 @@ public class PlayerLocationListener implements Listener {
 		cpBlocks.add(new Location(plugin.getServer().getWorld("world"), -1, 3, -1));
 		cpBlocks.add(new Location(plugin.getServer().getWorld("world"),  0, 3, -1));
 		cpBlocks.add(new Location(plugin.getServer().getWorld("world"),  1, 3, -1));
+		*/
+		
+		cpBlocks.add(new Location(plugin.getServer().getWorld("world"),  1142, 40,  203));
+		cpBlocks.add(new Location(plugin.getServer().getWorld("world"),  1143, 40,  203));
+		cpBlocks.add(new Location(plugin.getServer().getWorld("world"),  1144, 40,  203));
+		cpBlocks.add(new Location(plugin.getServer().getWorld("world"),  1142, 40,  204));
+		cpBlocks.add(new Location(plugin.getServer().getWorld("world"),  1143, 40,  204));
+		cpBlocks.add(new Location(plugin.getServer().getWorld("world"),  1144, 40,  204));
+		cpBlocks.add(new Location(plugin.getServer().getWorld("world"),  1142, 40,  205));
+		cpBlocks.add(new Location(plugin.getServer().getWorld("world"),  1143, 40,  205));
+		cpBlocks.add(new Location(plugin.getServer().getWorld("world"),  1144, 40,  205));		
 	}
 	
     @EventHandler
@@ -51,8 +72,8 @@ public class PlayerLocationListener implements Listener {
     	Player player = event.getPlayer();	    	
     	PlayerDataClass playerGame = plugin.getPlayerHandler().findPlayer(player.getDisplayName());
     
-        if (isInside(player.getLocation(), new Location(player.getWorld(), 4, 7, 3), 
-        		new Location(player.getWorld(), -3, 2, -2)) == true) {
+        if (isInside(player.getLocation(), capBoundaryA, 
+        		capBoundaryB) == true) {
         	if(inside.contains(event.getPlayer().getName()) == false && 
         			playerGame != null) {
         		
